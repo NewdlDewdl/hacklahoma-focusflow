@@ -3,7 +3,11 @@ const router = express.Router();
 const Reading = require('../models/Reading');
 const Session = require('../models/Session');
 const { getCoachingMessage } = require('../services/gemini');
+const { generateSpeechBase64 } = require('../services/elevenlabs');
 const { z } = require('zod');
+
+// Nudge cooldown: 1 per 30 seconds per session
+const lastNudgeTime = new Map();
 
 // Schema validation
 const analyzeSchema = z.object({
@@ -48,19 +52,33 @@ router.post('/', async (req, res) => {
       timestamp: reading.timestamp
     });
 
-    // 5. Nudge Logic (Async Coaching)
-    // Fire-and-forget: don't block the HTTP response
-    if (focusScore < 50) {
-        // Only nudge if we haven't nudged recently (throttling handled by frontend for now, 
-        // but backend should generate the message)
-        getCoachingMessage(focusScore, 'declining', reading.distractionType)
-            .then(message => {
-                io.to(channel).emit('nudge:triggered', { 
-                    userId: session.userId,
-                    message 
-                });
-            })
-            .catch(err => console.error("Coaching generation failed:", err));
+    // 5. Nudge Logic (with 30s cooldown + ElevenLabs TTS)
+    let nudge = null;
+    const now = Date.now();
+    const lastNudge = lastNudgeTime.get(sessionId) || 0;
+    
+    if (focusScore < 50 && (now - lastNudge) > 30000) {
+      lastNudgeTime.set(sessionId, now);
+      
+      // Fire-and-forget: generate coaching text + audio, emit via socket
+      (async () => {
+        try {
+          const message = await getCoachingMessage(focusScore, 'declining', reading.distractionType);
+          const audioBase64 = await generateSpeechBase64(message);
+          
+          io.to(channel).emit('nudge:triggered', {
+            userId: session.userId,
+            message,
+            audio: audioBase64, // base64 data URI, frontend can play directly
+          });
+          
+          // Mark reading as nudge-triggered
+          reading.nudgeTriggered = true;
+          await reading.save();
+        } catch (err) {
+          console.error('Nudge pipeline failed:', err);
+        }
+      })();
     }
 
     res.json({ success: true, readingId: reading._id });
