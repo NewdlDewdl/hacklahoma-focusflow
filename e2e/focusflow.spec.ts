@@ -62,11 +62,12 @@ test.describe('FocusFlow E2E', () => {
     await expect(page.getByText(/not recording/i)).toBeVisible();
   });
 
-  test('socket connection indicator exists', async ({ page }) => {
+  test('no error state on page load', async ({ page }) => {
     await page.goto('http://localhost:3000');
-    // Socket status shown in header area
-    const socketText = page.getByText(/socket/i);
-    await expect(socketText).toBeVisible();
+    // Should not show connection warning when connected
+    await page.waitForTimeout(2000);
+    const warning = page.getByText(/connecting to server/i);
+    await expect(warning).not.toBeVisible();
   });
 
   test('backend health check responds', async ({ request }) => {

@@ -248,9 +248,11 @@ export default function Home() {
           <p className="text-purple-200 text-lg">
             AI-powered focus coaching with real-time feedback
           </p>
-          <div className="mt-2 text-sm text-purple-300/60">
-            Socket: {isConnected ? '🟢 Connected' : '🔴 Disconnected'}
-          </div>
+          {!isConnected && (
+            <div className="mt-2 text-sm text-red-400/80">
+              ⚠️ Connecting to server...
+            </div>
+          )}
         </div>
 
         {/* Mode Toggle (only when not in active session) */}
@@ -334,8 +336,8 @@ export default function Home() {
           <canvas ref={canvasRef} />
         </div>
 
-        {/* Focus Score Display */}
-        <div className="bg-white/10 backdrop-blur-lg rounded-3xl p-8 mb-6 border border-white/20">
+        {/* Focus Score Display — hide in multiplayer lobby when not in session */}
+        <div className={`bg-white/10 backdrop-blur-lg rounded-3xl p-8 mb-6 border border-white/20 ${mode === 'multiplayer' && !isInRoom && !isActive ? 'hidden' : ''}`}>
           <div className="text-center mb-6">
             <div className="inline-block">
               <AnimatedScore
@@ -363,8 +365,8 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Session Stats */}
-        <div className="grid grid-cols-3 gap-4 mb-8">
+        {/* Session Stats — hide in multiplayer lobby */}
+        <div className={`grid grid-cols-3 gap-4 mb-8 ${mode === 'multiplayer' && !isInRoom && !isActive ? 'hidden' : ''}`}>
           <div className="stat-card bg-white/5 backdrop-blur-lg rounded-2xl p-6 border border-white/10 text-center">
             <div className="text-3xl font-bold text-white mb-2">
               {formatTime(sessionTime)}
@@ -381,7 +383,7 @@ export default function Home() {
           
           <div className="stat-card bg-white/5 backdrop-blur-lg rounded-2xl p-6 border border-white/10 text-center">
             <div className="text-3xl font-bold text-white mb-2">
-              {Math.floor(sessionTime * focusScore / 100)}s
+              {formatTime(Math.floor(sessionTime * focusScore / 100))}
             </div>
             <div className="text-purple-200">Focused Time</div>
           </div>
