@@ -49,71 +49,98 @@
 
 :root {
   --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  
+  /* Hacklahoma Earth Tone Palette */
+  --parchment: #F5F1E6;
+  --ink: #2B2B2B;
+  --olive: #7C8B6F;
+  --rust: #B36B4C;
+  --brass: #C2A15E;
+  --teal: #6D8D8A;
+  
+  /* Base colors */
+  --background: oklch(0.963 0.008 85.873); /* parchment */
+  --foreground: oklch(0.225 0 0); /* ink */
+  --card: oklch(0.98 0.005 85.873); /* lighter parchment */
+  --card-foreground: oklch(0.225 0 0); /* ink */
+  --popover: oklch(0.98 0.005 85.873);
+  --popover-foreground: oklch(0.225 0 0);
+  
+  /* Primary: brass/gold */
+  --primary: oklch(0.653 0.083 79.396); /* brass */
+  --primary-foreground: oklch(0.225 0 0); /* ink */
+  
+  /* Secondary: olive */
+  --secondary: oklch(0.594 0.044 131.452); /* olive */
+  --secondary-foreground: oklch(0.98 0.005 85.873); /* parchment */
+  
+  /* Muted: lighter olive */
+  --muted: oklch(0.92 0.015 131.452);
+  --muted-foreground: oklch(0.45 0.02 131.452);
+  
+  /* Accent: rust */
+  --accent: oklch(0.583 0.098 39.756); /* rust */
+  --accent-foreground: oklch(0.98 0.005 85.873); /* parchment */
+  
+  /* Destructive: deeper rust */
+  --destructive: oklch(0.5 0.15 39.756);
+  
+  /* Borders and input */
+  --border: oklch(0.85 0.015 85.873);
+  --input: oklch(0.9 0.01 85.873);
+  --ring: oklch(0.653 0.083 79.396); /* brass */
+  
+  /* Charts: earth tone palette */
+  --chart-1: oklch(0.594 0.044 131.452); /* olive */
+  --chart-2: oklch(0.583 0.098 39.756); /* rust */
+  --chart-3: oklch(0.653 0.083 79.396); /* brass */
+  --chart-4: oklch(0.558 0.05 190.109); /* teal */
+  --chart-5: oklch(0.45 0.02 131.452); /* dark olive */
+  
+  /* Sidebar */
+  --sidebar: oklch(0.98 0.005 85.873);
+  --sidebar-foreground: oklch(0.225 0 0);
+  --sidebar-primary: oklch(0.653 0.083 79.396);
+  --sidebar-primary-foreground: oklch(0.225 0 0);
+  --sidebar-accent: oklch(0.92 0.015 131.452);
+  --sidebar-accent-foreground: oklch(0.225 0 0);
+  --sidebar-border: oklch(0.85 0.015 85.873);
+  --sidebar-ring: oklch(0.653 0.083 79.396);
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  /* Dark mode uses inverted earth tones */
+  --background: oklch(0.25 0.01 131.452); /* dark olive-tinted bg */
+  --foreground: oklch(0.963 0.008 85.873); /* parchment text */
+  --card: oklch(0.3 0.015 131.452);
+  --card-foreground: oklch(0.963 0.008 85.873);
+  --popover: oklch(0.3 0.015 131.452);
+  --popover-foreground: oklch(0.963 0.008 85.873);
+  --primary: oklch(0.753 0.1 79.396); /* brighter brass */
+  --primary-foreground: oklch(0.225 0 0);
+  --secondary: oklch(0.45 0.03 131.452);
+  --secondary-foreground: oklch(0.963 0.008 85.873);
+  --muted: oklch(0.35 0.02 131.452);
+  --muted-foreground: oklch(0.7 0.03 85.873);
+  --accent: oklch(0.65 0.11 39.756); /* lighter rust */
+  --accent-foreground: oklch(0.963 0.008 85.873);
+  --destructive: oklch(0.6 0.15 39.756);
+  --border: oklch(0.4 0.02 131.452);
+  --input: oklch(0.35 0.02 131.452);
+  --ring: oklch(0.753 0.1 79.396);
+  --chart-1: oklch(0.694 0.055 131.452);
+  --chart-2: oklch(0.683 0.11 39.756);
+  --chart-3: oklch(0.753 0.1 79.396);
+  --chart-4: oklch(0.658 0.06 190.109);
+  --chart-5: oklch(0.55 0.03 131.452);
+  --sidebar: oklch(0.3 0.015 131.452);
+  --sidebar-foreground: oklch(0.963 0.008 85.873);
+  --sidebar-primary: oklch(0.753 0.1 79.396);
+  --sidebar-primary-foreground: oklch(0.225 0 0);
+  --sidebar-accent: oklch(0.35 0.02 131.452);
+  --sidebar-accent-foreground: oklch(0.963 0.008 85.873);
+  --sidebar-border: oklch(0.4 0.02 131.452);
+  --sidebar-ring: oklch(0.753 0.1 79.396);
 }
 
 @layer base {
@@ -127,61 +154,72 @@
 
 /* Custom animations and effects */
 @layer components {
-  /* Glow effect for focus score */
+  /* Subtle glow effect for focus score - earth tones */
   .score-glow-green {
     text-shadow: 
-      0 0 20px rgba(74, 222, 128, 0.5),
-      0 0 40px rgba(74, 222, 128, 0.3),
-      0 0 60px rgba(74, 222, 128, 0.2);
+      0 0 12px rgba(124, 139, 111, 0.4), /* olive */
+      0 0 24px rgba(124, 139, 111, 0.2);
   }
   
   .score-glow-yellow {
     text-shadow: 
-      0 0 20px rgba(250, 204, 21, 0.5),
-      0 0 40px rgba(250, 204, 21, 0.3),
-      0 0 60px rgba(250, 204, 21, 0.2);
+      0 0 12px rgba(194, 161, 94, 0.4), /* brass */
+      0 0 24px rgba(194, 161, 94, 0.2);
   }
   
   .score-glow-red {
     text-shadow: 
-      0 0 20px rgba(239, 68, 68, 0.5),
-      0 0 40px rgba(239, 68, 68, 0.3),
-      0 0 60px rgba(239, 68, 68, 0.2);
+      0 0 12px rgba(179, 107, 76, 0.4), /* rust */
+      0 0 24px rgba(179, 107, 76, 0.2);
   }
 
-  /* Mesh gradient background overlay */
+  /* Warm parchment gradient background */
   .mesh-gradient {
-    background-image: 
-      radial-gradient(at 27% 37%, hsla(215, 98%, 61%, 0.1) 0px, transparent 50%),
-      radial-gradient(at 97% 21%, hsla(125, 98%, 72%, 0.05) 0px, transparent 50%),
-      radial-gradient(at 52% 99%, hsla(354, 98%, 61%, 0.05) 0px, transparent 50%),
-      radial-gradient(at 10% 29%, hsla(256, 96%, 67%, 0.1) 0px, transparent 50%),
-      radial-gradient(at 97% 96%, hsla(38, 60%, 74%, 0.05) 0px, transparent 50%),
-      radial-gradient(at 33% 50%, hsla(222, 67%, 73%, 0.1) 0px, transparent 50%),
-      radial-gradient(at 79% 53%, hsla(343, 68%, 79%, 0.05) 0px, transparent 50%);
+    background: 
+      linear-gradient(135deg, 
+        rgba(245, 241, 230, 1) 0%, 
+        rgba(240, 235, 220, 1) 50%, 
+        rgba(245, 241, 230, 1) 100%);
+    background-size: 200% 200%;
   }
 
-  /* Card hover states */
+  /* Subtle map line overlay (optional class) */
+  .map-lines {
+    background-image: 
+      linear-gradient(rgba(43, 43, 43, 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(43, 43, 43, 0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+
+  /* Paper texture overlay */
+  .paper-texture {
+    background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' /%3E%3CfeColorMatrix values='0 0 0 0 0, 0 0 0 0 0, 0 0 0 0 0, 0 0 0 0.02 0'/%3E%3C/filter%3E%3Crect width='100' height='100' filter='url(%23noise)' opacity='0.4'/%3E%3C/svg%3E");
+  }
+
+  /* Card hover states - earth tone shadows */
   .stat-card {
     @apply transition-all duration-300 ease-out;
+    box-shadow: 
+      0 2px 8px rgba(43, 43, 43, 0.08),
+      0 1px 2px rgba(43, 43, 43, 0.04);
   }
   
   .stat-card:hover {
-    @apply transform scale-105;
+    @apply transform -translate-y-1;
     box-shadow: 
-      0 0 40px rgba(168, 85, 247, 0.2),
-      0 20px 40px rgba(0, 0, 0, 0.4);
+      0 8px 24px rgba(124, 139, 111, 0.12), /* olive shadow */
+      0 4px 8px rgba(43, 43, 43, 0.08);
   }
 
-  /* Button hover state */
+  /* Button hover state - brass accent */
   .action-button {
     @apply transition-all duration-300 ease-out;
   }
   
   .action-button:hover:not(:disabled) {
-    @apply transform scale-105;
+    @apply transform -translate-y-0.5;
     box-shadow: 
-      0 0 30px rgba(34, 197, 94, 0.4),
-      0 10px 30px rgba(0, 0, 0, 0.3);
+      0 6px 16px rgba(194, 161, 94, 0.25), /* brass glow */
+      0 2px 8px rgba(43, 43, 43, 0.1);
   }
 }
