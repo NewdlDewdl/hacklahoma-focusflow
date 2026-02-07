@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Reading = require('../models/Reading');
 const Session = require('../models/Session');
+const { getCoachingMessage } = require('../services/gemini');
 const { z } = require('zod');
 
 // Schema validation
@@ -47,19 +48,22 @@ router.post('/', async (req, res) => {
       timestamp: reading.timestamp
     });
 
-    // 5. Nudge Logic (Simple Threshold for now)
-    // TODO: Integrate Gemini for smart coaching text here
-    let nudge = null;
-    if (focusScore < 40) {
-        // Rate limit nudges? (For now, frontend handles speech throttling)
-        nudge = "Focus checks failing. Let's reset.";
-        io.to(channel).emit('nudge:triggered', { 
-            userId: session.userId,
-            message: nudge 
-        });
+    // 5. Nudge Logic (Async Coaching)
+    // Fire-and-forget: don't block the HTTP response
+    if (focusScore < 50) {
+        // Only nudge if we haven't nudged recently (throttling handled by frontend for now, 
+        // but backend should generate the message)
+        getCoachingMessage(focusScore, 'declining', reading.distractionType)
+            .then(message => {
+                io.to(channel).emit('nudge:triggered', { 
+                    userId: session.userId,
+                    message 
+                });
+            })
+            .catch(err => console.error("Coaching generation failed:", err));
     }
 
-    res.json({ success: true, readingId: reading._id, nudge });
+    res.json({ success: true, readingId: reading._id });
 
   } catch (error) {
     if (error instanceof z.ZodError) {

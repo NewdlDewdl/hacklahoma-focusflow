@@ -8,6 +8,7 @@ const compression = require('compression');
 const rateLimit = require('express-rate-limit');
 const { connectDB } = require('./config/db');
 const { initSolana } = require('./services/solana');
+const { initGemini } = require('./services/gemini');
 
 const app = express();
 const server = http.createServer(app);
@@ -80,6 +81,9 @@ async function start() {
     console.warn('⚠️  Solana not initialized:', err.message);
     console.log('   Server will start without Solana (for dev)');
   }
+
+  // Init Gemini
+  initGemini();
   
   server.listen(PORT, () => {
     console.log(`🚀 FocusFlow backend running on port ${PORT}`);
