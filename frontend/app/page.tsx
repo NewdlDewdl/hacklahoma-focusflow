@@ -6,9 +6,6 @@ import { useFocusSession } from '@/hooks/useFocusSession';
 import { calculateFocusScore, getAttentionState } from '@/lib/humanConfig';
 import { AnimatedNumber } from '@/components/AnimatedNumber';
 
-// @ts-ignore - Human.js loaded via CDN in layout
-declare const Human: any;
-
 export default function Home() {
   const { isConnected, joinSession, onFocusUpdate, onNudge } = useSocket();
   const { session, user, isActive, startSession, endSession, sendFocusUpdate } = useFocusSession();
@@ -24,31 +21,43 @@ export default function Home() {
   const humanRef = useRef<any>(null);
   const streamRef = useRef<MediaStream | null>(null);
 
-  // Initialize Human.js
+  // Initialize Human.js (wait for CDN script to load)
   useEffect(() => {
-    if (typeof window === 'undefined' || !Human) return;
+    if (typeof window === 'undefined') return;
 
-    const config = {
-      backend: 'webgl',
-      modelBasePath: 'https://cdn.jsdelivr.net/npm/@vladmandic/human/models/',
-      face: { 
-        enabled: true, 
-        detector: { rotation: true },
-        mesh: { enabled: false },
-        iris: { enabled: false }, 
-        description: { enabled: false },
-        emotion: { enabled: false }
-      },
-      body: { enabled: false },
-      hand: { enabled: false },
-      object: { enabled: false },
-      gesture: { enabled: false }
+    const initHuman = () => {
+      // @ts-ignore
+      if (!window.Human) {
+        console.log('⏳ Waiting for Human.js CDN...');
+        setTimeout(initHuman, 100);
+        return;
+      }
+
+      const config = {
+        backend: 'webgl',
+        modelBasePath: 'https://cdn.jsdelivr.net/npm/@vladmandic/human/models/',
+        face: { 
+          enabled: true, 
+          detector: { rotation: true },
+          mesh: { enabled: false },
+          iris: { enabled: false }, 
+          description: { enabled: false },
+          emotion: { enabled: false }
+        },
+        body: { enabled: false },
+        hand: { enabled: false },
+        object: { enabled: false },
+        gesture: { enabled: false }
+      };
+
+      // @ts-ignore
+      humanRef.current = new window.Human.Human(config);
+      humanRef.current.load().then(() => {
+        console.log('✅ Human.js loaded and ready');
+      });
     };
 
-    humanRef.current = new Human.Human(config);
-    humanRef.current.load().then(() => {
-      console.log('✅ Human.js loaded');
-    });
+    initHuman();
   }, []);
 
   // Listen for real-time focus updates from backend
