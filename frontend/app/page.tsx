@@ -63,8 +63,16 @@ export default function Home() {
       console.log('🔔 Nudge received:', data.message);
       setLastNudge(data.message);
       
-      // Play audio if audioUrl provided (Tom's TTS service)
-      // For now, just display text
+      // Play ElevenLabs TTS audio (base64 data URI from backend)
+      if (data.audio) {
+        try {
+          const audio = new Audio(data.audio);
+          audio.play().catch(err => console.warn('Audio play blocked:', err));
+        } catch (err) {
+          console.warn('Audio creation failed:', err);
+        }
+      }
+      
       setTimeout(() => setLastNudge(null), 5000);
     });
   }, [onFocusUpdate, onNudge]);
