@@ -3,6 +3,9 @@ const express = require('express');
 const http = require('http');
 const { Server } = require('socket.io');
 const cors = require('cors');
+const helmet = require('helmet');
+const compression = require('compression');
+const rateLimit = require('express-rate-limit');
 const { connectDB } = require('./config/db');
 const { initSolana } = require('./services/solana');
 
@@ -13,8 +16,19 @@ const io = new Server(server, {
 });
 
 // Middleware
+app.use(helmet({ crossOriginResourcePolicy: false }));
+app.use(compression());
 app.use(cors());
-app.use(express.json({ limit: '5mb' })); // large for base64 frames
+app.use(express.json({ limit: '5mb' }));
+
+// Rate limiting — generous for demo, protective for prod
+const apiLimiter = rateLimit({
+  windowMs: 60 * 1000, // 1 minute
+  max: 120,
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+app.use('/api/', apiLimiter);
 
 // Health check
 app.get('/health', (req, res) => {
