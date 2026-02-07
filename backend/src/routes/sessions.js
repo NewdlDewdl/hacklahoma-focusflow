@@ -36,9 +36,14 @@ router.post('/', async (req, res) => {
 // POST /api/sessions/:id/end — end a session, compute stats, reward tokens
 router.post('/:id/end', async (req, res) => {
   try {
-    const session = await Session.findById(req.params.id);
-    if (!session) return res.status(404).json({ error: 'Session not found' });
-    if (session.status !== 'active') return res.status(400).json({ error: 'Session already ended' });
+    // Optimistic locking to prevent double-minting
+    const session = await Session.findOneAndUpdate(
+      { _id: req.params.id, status: 'active' },
+      { status: 'completed', endedAt: new Date() },
+      { new: true }
+    );
+    
+    if (!session) return res.status(400).json({ error: 'Session not found or already ended' });
 
     // Compute aggregated stats from readings
     const readings = await Reading.find({ sessionId: session._id }).sort({ timestamp: 1 });
