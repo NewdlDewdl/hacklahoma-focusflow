@@ -1,13 +1,35 @@
 const express = require('express');
 const router = express.Router();
-const Reading = require('../models/Reading');
-const Session = require('../models/Session');
 const { getCoachingMessage } = require('../services/gemini');
 const { generateSpeechBase64 } = require('../services/elevenlabs');
 const { z } = require('zod');
+const mongoose = require('mongoose');
+
+// Lazy-load models only if DB is connected
+let Reading, Session;
+function getModels() {
+  if (!Reading) Reading = require('../models/Reading');
+  if (!Session) Session = require('../models/Session');
+}
+
+const dbConnected = () => mongoose.connection.readyState === 1;
 
 // Nudge cooldown: 1 per 30 seconds per session
 const lastNudgeTime = new Map();
+
+// In-memory session store (fallback when no DB)
+const memSessions = new Map();
+function getOrCreateMemSession(sessionId) {
+  if (!memSessions.has(sessionId)) {
+    memSessions.set(sessionId, {
+      _id: sessionId,
+      userId: `user_${sessionId.slice(0, 6)}`,
+      roomId: null,
+      type: 'solo',
+    });
+  }
+  return memSessions.get(sessionId);
+}
 
 // Schema validation
 const analyzeSchema = z.object({
@@ -26,12 +48,17 @@ router.post('/', async (req, res) => {
     // 1. Validate
     const { sessionId, focusScore, attentionState, distractionType: inputDistraction, metadata } = analyzeSchema.parse(req.body);
     
-    // 2. Fetch session (to verify user/room)
-    const session = await Session.findById(sessionId);
-    if (!session) return res.status(404).json({ error: 'Session not found' });
+    // 2. Fetch session (DB or in-memory fallback)
+    let session;
+    if (dbConnected()) {
+      getModels();
+      session = await Session.findById(sessionId);
+    }
+    if (!session) {
+      session = getOrCreateMemSession(sessionId);
+    }
 
     // 3. Determine distraction type
-    // Prefer explicit input; otherwise infer from attentionState/metadata
     let distractionType = inputDistraction || 'none';
     if (!inputDistraction) {
       if (attentionState === 'distracted') {
@@ -44,22 +71,25 @@ router.post('/', async (req, res) => {
       }
     }
 
-    // 4. Save Reading
-    const reading = new Reading({
-      sessionId,
-      userId: session.userId,
-      focusScore,
-      distractionType,
-      timestamp: new Date(),
-      nudgeTriggered: false,
-    });
-    await reading.save();
+    // 4. Save Reading (if DB available)
+    let readingId = null;
+    if (dbConnected()) {
+      getModels();
+      const reading = new Reading({
+        sessionId,
+        userId: session.userId,
+        focusScore,
+        distractionType,
+        timestamp: new Date(),
+        nudgeTriggered: false,
+      });
+      await reading.save();
+      readingId = reading._id;
+    }
 
-    // 4. Real-time broadcast (to session/room)
+    // 5. Real-time broadcast
     const io = req.app.get('io');
-    
-    // Broadcast to the room (if multiplayer) or private session channel
-    const channel = session.roomId || `session:${sessionId}`;
+    const channel = session.roomId ? `room:${session.roomId}` : `session:${sessionId}`;
     
     const finalAttention = attentionState || (distractionType === 'none' ? 'focused' : 'distracted');
     io.to(channel).emit('focus:update', {
@@ -67,32 +97,30 @@ router.post('/', async (req, res) => {
       focusScore,
       attentionState: finalAttention,
       distractionType,
-      timestamp: reading.timestamp
+      timestamp: new Date(),
     });
 
-    // 5. Nudge Logic (30s cooldown + ElevenLabs TTS)
+    // 6. Nudge Logic (30s cooldown + Gemini + ElevenLabs TTS)
     const now = Date.now();
     const lastNudge = lastNudgeTime.get(sessionId) || 0;
     if (focusScore < 50 && (now - lastNudge) > 30000) {
       lastNudgeTime.set(sessionId, now);
       (async () => {
         try {
-          const message = await getCoachingMessage(focusScore, 'declining', reading.distractionType);
+          const message = await getCoachingMessage(focusScore, 'declining', distractionType);
           const audioBase64 = await generateSpeechBase64(message);
           io.to(channel).emit('nudge:triggered', {
             userId: session.userId,
             message,
             audio: audioBase64,
           });
-          reading.nudgeTriggered = true;
-          await reading.save();
         } catch (err) {
           console.error('Nudge pipeline failed:', err);
         }
       })();
     }
 
-    res.json({ success: true, readingId: reading._id });
+    res.json({ success: true, readingId });
 
   } catch (error) {
     if (error instanceof z.ZodError) {
@@ -102,5 +130,10 @@ router.post('/', async (req, res) => {
     res.status(500).json({ error: 'Server error' });
   }
 });
+
+// Allow external code to register in-memory sessions
+router.registerSession = (sessionId, data) => {
+  memSessions.set(sessionId, { ...getOrCreateMemSession(sessionId), ...data });
+};
 
 module.exports = router;
