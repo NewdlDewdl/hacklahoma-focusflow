@@ -1,14 +1,17 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import { motion } from 'framer-motion';
 import { useSocket } from '@/hooks/useSocket';
 import { useFocusSession } from '@/hooks/useFocusSession';
 import { useRoom } from '@/hooks/useRoom';
 import { calculateFocusScore, getAttentionState } from '@/lib/humanConfig';
 import { AnimatedScore } from '@/components/AnimatedScore';
 import { FocusChart } from '@/components/FocusChart';
+import { FocusScoreRing } from '@/components/FocusScoreRing';
 import { RoomLobby } from '@/components/RoomLobby';
 import { RoomLeaderboard } from '@/components/RoomLeaderboard';
+import { StatCard } from '@/components/StatCard';
 
 export default function Home() {
   const { socket, isConnected, joinSession, onFocusUpdate, onNudge } = useSocket();
@@ -336,57 +339,16 @@ export default function Home() {
           <canvas ref={canvasRef} />
         </div>
 
-        {/* Focus Score Display — hide in multiplayer lobby when not in session */}
-        <div className={`bg-white/10 backdrop-blur-lg rounded-3xl p-8 mb-6 border border-white/20 ${mode === 'multiplayer' && !isInRoom && !isActive ? 'hidden' : ''}`}>
-          <div className="text-center mb-6">
-            <div className="inline-block">
-              <AnimatedScore
-                value={focusScore}
-                className={`text-8xl font-bold ${
-                  focusScore >= 80 ? 'score-glow-green' :
-                  focusScore >= 60 ? 'score-glow-yellow' :
-                  'score-glow-red'
-                }`}
-              />
-              <div className="text-purple-200 text-xl mt-2">Focus Score</div>
-            </div>
-          </div>
-
-          {/* Progress Bar */}
-          <div className="w-full bg-white/20 rounded-full h-4 overflow-hidden">
-            <div 
-              className={`h-full transition-all duration-500 ${
-                focusScore >= 80 ? 'bg-green-400' :
-                focusScore >= 60 ? 'bg-yellow-400' :
-                'bg-red-400'
-              }`}
-              style={{ width: `${focusScore}%` }}
-            />
-          </div>
+        {/* Focus Score Ring — hide in multiplayer lobby when not in session */}
+        <div className={`flex justify-center mb-8 ${mode === 'multiplayer' && !isInRoom && !isActive ? 'hidden' : ''}`}>
+          <FocusScoreRing score={focusScore} size={260} />
         </div>
 
         {/* Session Stats — hide in multiplayer lobby */}
         <div className={`grid grid-cols-3 gap-4 mb-8 ${mode === 'multiplayer' && !isInRoom && !isActive ? 'hidden' : ''}`}>
-          <div className="stat-card bg-white/5 backdrop-blur-lg rounded-2xl p-6 border border-white/10 text-center">
-            <div className="text-3xl font-bold text-white mb-2">
-              {formatTime(sessionTime)}
-            </div>
-            <div className="text-purple-200">Session Time</div>
-          </div>
-          
-          <div className="stat-card bg-white/5 backdrop-blur-lg rounded-2xl p-6 border border-white/10 text-center">
-            <div className="text-3xl font-bold text-white mb-2">
-              {distractionCount}
-            </div>
-            <div className="text-purple-200">Distractions</div>
-          </div>
-          
-          <div className="stat-card bg-white/5 backdrop-blur-lg rounded-2xl p-6 border border-white/10 text-center">
-            <div className="text-3xl font-bold text-white mb-2">
-              {formatTime(Math.floor(sessionTime * focusScore / 100))}
-            </div>
-            <div className="text-purple-200">Focused Time</div>
-          </div>
+          <StatCard value={formatTime(sessionTime)} label="Session Time" delay={0.1} />
+          <StatCard value={distractionCount} label="Distractions" delay={0.2} />
+          <StatCard value={formatTime(Math.floor(sessionTime * focusScore / 100))} label="Focused Time" delay={0.3} />
         </div>
 
         {/* Focus Timeline Chart (only show during active session with history) */}
@@ -409,20 +371,29 @@ export default function Home() {
         {/* Session Controls */}
         <div className="flex gap-4 justify-center">
           {!isActive ? (
-            <button
+            <motion.button
               onClick={handleStartSession}
               disabled={!isConnected}
-              className="action-button bg-gradient-to-r from-green-500 to-green-600 disabled:from-gray-500 disabled:to-gray-600 disabled:cursor-not-allowed text-white px-12 py-4 rounded-2xl text-xl font-semibold shadow-xl"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.97 }}
+              className="relative bg-gradient-to-r from-emerald-500 to-green-500 disabled:from-gray-600 disabled:to-gray-700 disabled:cursor-not-allowed text-white px-14 py-4 rounded-2xl text-xl font-semibold shadow-xl shadow-green-500/20 hover:shadow-green-500/40 transition-shadow overflow-hidden"
             >
-              Start Focus Session
-            </button>
+              <span className="relative z-10">Start Focus Session</span>
+              <motion.div
+                className="absolute inset-0 bg-gradient-to-r from-emerald-400 to-green-400 opacity-0 hover:opacity-100 transition-opacity"
+                animate={{ opacity: [0, 0.3, 0] }}
+                transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+              />
+            </motion.button>
           ) : (
-            <button
+            <motion.button
               onClick={handleEndSession}
-              className="action-button bg-gradient-to-r from-red-500 to-red-600 text-white px-12 py-4 rounded-2xl text-xl font-semibold shadow-xl"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.97 }}
+              className="bg-gradient-to-r from-red-500 to-rose-500 text-white px-14 py-4 rounded-2xl text-xl font-semibold shadow-xl shadow-red-500/20 hover:shadow-red-500/40 transition-shadow"
             >
               End Session
-            </button>
+            </motion.button>
           )}
         </div>
 
