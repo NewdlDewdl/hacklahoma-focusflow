@@ -124,3 +124,64 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Custom animations and effects */
+@layer components {
+  /* Glow effect for focus score */
+  .score-glow-green {
+    text-shadow: 
+      0 0 20px rgba(74, 222, 128, 0.5),
+      0 0 40px rgba(74, 222, 128, 0.3),
+      0 0 60px rgba(74, 222, 128, 0.2);
+  }
+  
+  .score-glow-yellow {
+    text-shadow: 
+      0 0 20px rgba(250, 204, 21, 0.5),
+      0 0 40px rgba(250, 204, 21, 0.3),
+      0 0 60px rgba(250, 204, 21, 0.2);
+  }
+  
+  .score-glow-red {
+    text-shadow: 
+      0 0 20px rgba(239, 68, 68, 0.5),
+      0 0 40px rgba(239, 68, 68, 0.3),
+      0 0 60px rgba(239, 68, 68, 0.2);
+  }
+
+  /* Mesh gradient background overlay */
+  .mesh-gradient {
+    background-image: 
+      radial-gradient(at 27% 37%, hsla(215, 98%, 61%, 0.1) 0px, transparent 50%),
+      radial-gradient(at 97% 21%, hsla(125, 98%, 72%, 0.05) 0px, transparent 50%),
+      radial-gradient(at 52% 99%, hsla(354, 98%, 61%, 0.05) 0px, transparent 50%),
+      radial-gradient(at 10% 29%, hsla(256, 96%, 67%, 0.1) 0px, transparent 50%),
+      radial-gradient(at 97% 96%, hsla(38, 60%, 74%, 0.05) 0px, transparent 50%),
+      radial-gradient(at 33% 50%, hsla(222, 67%, 73%, 0.1) 0px, transparent 50%),
+      radial-gradient(at 79% 53%, hsla(343, 68%, 79%, 0.05) 0px, transparent 50%);
+  }
+
+  /* Card hover states */
+  .stat-card {
+    @apply transition-all duration-300 ease-out;
+  }
+  
+  .stat-card:hover {
+    @apply transform scale-105;
+    box-shadow: 
+      0 0 40px rgba(168, 85, 247, 0.2),
+      0 20px 40px rgba(0, 0, 0, 0.4);
+  }
+
+  /* Button hover state */
+  .action-button {
+    @apply transition-all duration-300 ease-out;
+  }
+  
+  .action-button:hover:not(:disabled) {
+    @apply transform scale-105;
+    box-shadow: 
+      0 0 30px rgba(34, 197, 94, 0.4),
+      0 10px 30px rgba(0, 0, 0, 0.3);
+  }
+}

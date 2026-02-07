@@ -202,7 +202,7 @@ export default function Home() {
   };
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-8">
+    <main className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 mesh-gradient p-8">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="text-center mb-12">
@@ -238,7 +238,11 @@ export default function Home() {
             <div className="inline-block">
               <AnimatedScore
                 value={focusScore}
-                className="text-8xl font-bold"
+                className={`text-8xl font-bold ${
+                  focusScore >= 80 ? 'score-glow-green' :
+                  focusScore >= 60 ? 'score-glow-yellow' :
+                  'score-glow-red'
+                }`}
               />
               <div className="text-purple-200 text-xl mt-2">Focus Score</div>
             </div>
@@ -259,21 +263,21 @@ export default function Home() {
 
         {/* Session Stats */}
         <div className="grid grid-cols-3 gap-4 mb-8">
-          <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 text-center">
+          <div className="stat-card bg-white/5 backdrop-blur-lg rounded-2xl p-6 border border-white/10 text-center">
             <div className="text-3xl font-bold text-white mb-2">
               {formatTime(sessionTime)}
             </div>
             <div className="text-purple-200">Session Time</div>
           </div>
           
-          <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 text-center">
+          <div className="stat-card bg-white/5 backdrop-blur-lg rounded-2xl p-6 border border-white/10 text-center">
             <div className="text-3xl font-bold text-white mb-2">
               {distractionCount}
             </div>
             <div className="text-purple-200">Distractions</div>
           </div>
           
-          <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 text-center">
+          <div className="stat-card bg-white/5 backdrop-blur-lg rounded-2xl p-6 border border-white/10 text-center">
             <div className="text-3xl font-bold text-white mb-2">
               {Math.floor(sessionTime * focusScore / 100)}s
             </div>
@@ -304,14 +308,14 @@ export default function Home() {
             <button
               onClick={handleStartSession}
               disabled={!isConnected}
-              className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 disabled:from-gray-500 disabled:to-gray-600 disabled:cursor-not-allowed text-white px-12 py-4 rounded-2xl text-xl font-semibold transition-all transform hover:scale-105 shadow-xl"
+              className="action-button bg-gradient-to-r from-green-500 to-green-600 disabled:from-gray-500 disabled:to-gray-600 disabled:cursor-not-allowed text-white px-12 py-4 rounded-2xl text-xl font-semibold shadow-xl"
             >
               Start Focus Session
             </button>
           ) : (
             <button
               onClick={handleEndSession}
-              className="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white px-12 py-4 rounded-2xl text-xl font-semibold transition-all transform hover:scale-105 shadow-xl"
+              className="action-button bg-gradient-to-r from-red-500 to-red-600 text-white px-12 py-4 rounded-2xl text-xl font-semibold shadow-xl"
             >
               End Session
             </button>
