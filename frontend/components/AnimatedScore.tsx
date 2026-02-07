@@ -25,9 +25,9 @@ export function AnimatedScore({ value, className = '' }: AnimatedScoreProps) {
   }, [display]);
 
   const color =
-    value >= 80 ? 'text-green-400' :
-    value >= 60 ? 'text-yellow-400' :
-    'text-red-400';
+    value >= 80 ? 'text-[#7C8B6F]' :
+    value >= 60 ? 'text-[#C2A15E]' :
+    'text-[#B36B4C]';
 
   return (
     <motion.span

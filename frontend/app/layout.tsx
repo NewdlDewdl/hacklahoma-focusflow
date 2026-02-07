@@ -14,12 +14,15 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap" rel="stylesheet" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap"
+          rel="stylesheet"
+        />
         <script src="https://cdn.jsdelivr.net/npm/@vladmandic/human/dist/human.js" defer></script>
       </head>
       <body
-        className="font-satoshi antialiased"
-        style={{ fontFamily: 'Satoshi, system-ui, sans-serif' }}
+        className="antialiased parchment-bg"
+        style={{ fontFamily: 'EB Garamond, serif' }}
       >
         {children}
       </body>

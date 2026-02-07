@@ -49,98 +49,74 @@
 
 :root {
   --radius: 0.625rem;
-  
-  /* Hacklahoma Earth Tone Palette */
-  --parchment: #F5F1E6;
-  --ink: #2B2B2B;
-  --olive: #7C8B6F;
-  --rust: #B36B4C;
-  --brass: #C2A15E;
-  --teal: #6D8D8A;
-  
-  /* Base colors */
-  --background: oklch(0.963 0.008 85.873); /* parchment */
-  --foreground: oklch(0.225 0 0); /* ink */
-  --card: oklch(0.98 0.005 85.873); /* lighter parchment */
-  --card-foreground: oklch(0.225 0 0); /* ink */
-  --popover: oklch(0.98 0.005 85.873);
-  --popover-foreground: oklch(0.225 0 0);
-  
-  /* Primary: brass/gold */
-  --primary: oklch(0.653 0.083 79.396); /* brass */
-  --primary-foreground: oklch(0.225 0 0); /* ink */
-  
-  /* Secondary: olive */
-  --secondary: oklch(0.594 0.044 131.452); /* olive */
-  --secondary-foreground: oklch(0.98 0.005 85.873); /* parchment */
-  
-  /* Muted: lighter olive */
-  --muted: oklch(0.92 0.015 131.452);
-  --muted-foreground: oklch(0.45 0.02 131.452);
-  
-  /* Accent: rust */
-  --accent: oklch(0.583 0.098 39.756); /* rust */
-  --accent-foreground: oklch(0.98 0.005 85.873); /* parchment */
-  
-  /* Destructive: deeper rust */
-  --destructive: oklch(0.5 0.15 39.756);
-  
-  /* Borders and input */
-  --border: oklch(0.85 0.015 85.873);
-  --input: oklch(0.9 0.01 85.873);
-  --ring: oklch(0.653 0.083 79.396); /* brass */
-  
-  /* Charts: earth tone palette */
-  --chart-1: oklch(0.594 0.044 131.452); /* olive */
-  --chart-2: oklch(0.583 0.098 39.756); /* rust */
-  --chart-3: oklch(0.653 0.083 79.396); /* brass */
-  --chart-4: oklch(0.558 0.05 190.109); /* teal */
-  --chart-5: oklch(0.45 0.02 131.452); /* dark olive */
-  
-  /* Sidebar */
-  --sidebar: oklch(0.98 0.005 85.873);
-  --sidebar-foreground: oklch(0.225 0 0);
-  --sidebar-primary: oklch(0.653 0.083 79.396);
-  --sidebar-primary-foreground: oklch(0.225 0 0);
-  --sidebar-accent: oklch(0.92 0.015 131.452);
-  --sidebar-accent-foreground: oklch(0.225 0 0);
-  --sidebar-border: oklch(0.85 0.015 85.873);
-  --sidebar-ring: oklch(0.653 0.083 79.396);
+  --font-geist-sans: 'EB Garamond', serif;
+  --font-geist-mono: 'IBM Plex Mono', monospace;
+
+  --background: #F5F1E6; /* parchment */
+  --foreground: #2B2B2B; /* ink */
+  --card: #F9F5EA;
+  --card-foreground: #2B2B2B;
+  --popover: #F9F5EA;
+  --popover-foreground: #2B2B2B;
+  --primary: #2B2B2B;
+  --primary-foreground: #F5F1E6;
+  --secondary: #EFE8D8;
+  --secondary-foreground: #2B2B2B;
+  --muted: #EFE8D8;
+  --muted-foreground: #5A5A5A;
+  --accent: #E6DDC9;
+  --accent-foreground: #2B2B2B;
+  --destructive: #B36B4C;
+  --border: #D8CFBE;
+  --input: #D8CFBE;
+  --ring: #7C8B6F; /* olive */
+  --chart-1: #7C8B6F;
+  --chart-2: #B36B4C;
+  --chart-3: #6D8D8A;
+  --chart-4: #C2A15E;
+  --chart-5: #8B7A5A;
+  --sidebar: #F2EDDF;
+  --sidebar-foreground: #2B2B2B;
+  --sidebar-primary: #2B2B2B;
+  --sidebar-primary-foreground: #F5F1E6;
+  --sidebar-accent: #E6DDC9;
+  --sidebar-accent-foreground: #2B2B2B;
+  --sidebar-border: #D8CFBE;
+  --sidebar-ring: #7C8B6F;
 }
 
 .dark {
-  /* Dark mode uses inverted earth tones */
-  --background: oklch(0.25 0.01 131.452); /* dark olive-tinted bg */
-  --foreground: oklch(0.963 0.008 85.873); /* parchment text */
-  --card: oklch(0.3 0.015 131.452);
-  --card-foreground: oklch(0.963 0.008 85.873);
-  --popover: oklch(0.3 0.015 131.452);
-  --popover-foreground: oklch(0.963 0.008 85.873);
-  --primary: oklch(0.753 0.1 79.396); /* brighter brass */
-  --primary-foreground: oklch(0.225 0 0);
-  --secondary: oklch(0.45 0.03 131.452);
-  --secondary-foreground: oklch(0.963 0.008 85.873);
-  --muted: oklch(0.35 0.02 131.452);
-  --muted-foreground: oklch(0.7 0.03 85.873);
-  --accent: oklch(0.65 0.11 39.756); /* lighter rust */
-  --accent-foreground: oklch(0.963 0.008 85.873);
-  --destructive: oklch(0.6 0.15 39.756);
-  --border: oklch(0.4 0.02 131.452);
-  --input: oklch(0.35 0.02 131.452);
-  --ring: oklch(0.753 0.1 79.396);
-  --chart-1: oklch(0.694 0.055 131.452);
-  --chart-2: oklch(0.683 0.11 39.756);
-  --chart-3: oklch(0.753 0.1 79.396);
-  --chart-4: oklch(0.658 0.06 190.109);
-  --chart-5: oklch(0.55 0.03 131.452);
-  --sidebar: oklch(0.3 0.015 131.452);
-  --sidebar-foreground: oklch(0.963 0.008 85.873);
-  --sidebar-primary: oklch(0.753 0.1 79.396);
-  --sidebar-primary-foreground: oklch(0.225 0 0);
-  --sidebar-accent: oklch(0.35 0.02 131.452);
-  --sidebar-accent-foreground: oklch(0.963 0.008 85.873);
-  --sidebar-border: oklch(0.4 0.02 131.452);
-  --sidebar-ring: oklch(0.753 0.1 79.396);
+  --background: #1F1D1A;
+  --foreground: #F5F1E6;
+  --card: #26231F;
+  --card-foreground: #F5F1E6;
+  --popover: #26231F;
+  --popover-foreground: #F5F1E6;
+  --primary: #F5F1E6;
+  --primary-foreground: #2B2B2B;
+  --secondary: #3A342C;
+  --secondary-foreground: #F5F1E6;
+  --muted: #3A342C;
+  --muted-foreground: #B8B1A3;
+  --accent: #4A4338;
+  --accent-foreground: #F5F1E6;
+  --destructive: #B36B4C;
+  --border: #3A342C;
+  --input: #3A342C;
+  --ring: #C2A15E;
+  --chart-1: #7C8B6F;
+  --chart-2: #B36B4C;
+  --chart-3: #6D8D8A;
+  --chart-4: #C2A15E;
+  --chart-5: #8B7A5A;
+  --sidebar: #26231F;
+  --sidebar-foreground: #F5F1E6;
+  --sidebar-primary: #C2A15E;
+  --sidebar-primary-foreground: #1F1D1A;
+  --sidebar-accent: #3A342C;
+  --sidebar-accent-foreground: #F5F1E6;
+  --sidebar-border: #3A342C;
+  --sidebar-ring: #C2A15E;
 }
 
 @layer base {
@@ -154,38 +130,42 @@
 
 /* Custom animations and effects */
 @layer components {
-  /* Subtle glow effect for focus score - earth tones */
+  /* Glow effect for focus score (subtle, vintage) */
   .score-glow-green {
-    text-shadow: 
-      0 0 12px rgba(124, 139, 111, 0.4), /* olive */
-      0 0 24px rgba(124, 139, 111, 0.2);
-  }
-  
-  .score-glow-yellow {
-    text-shadow: 
-      0 0 12px rgba(194, 161, 94, 0.4), /* brass */
-      0 0 24px rgba(194, 161, 94, 0.2);
-  }
-  
-  .score-glow-red {
-    text-shadow: 
-      0 0 12px rgba(179, 107, 76, 0.4), /* rust */
-      0 0 24px rgba(179, 107, 76, 0.2);
+    text-shadow:
+      0 0 12px rgba(124, 139, 111, 0.35),
+      0 0 24px rgba(124, 139, 111, 0.2),
+      0 0 36px rgba(124, 139, 111, 0.12);
   }
 
-  /* Warm parchment gradient background */
-  .mesh-gradient {
-    background: 
-      linear-gradient(135deg, 
-        rgba(245, 241, 230, 1) 0%, 
-        rgba(240, 235, 220, 1) 50%, 
-        rgba(245, 241, 230, 1) 100%);
-    background-size: 200% 200%;
+  .score-glow-yellow {
+    text-shadow:
+      0 0 12px rgba(194, 161, 94, 0.35),
+      0 0 24px rgba(194, 161, 94, 0.2),
+      0 0 36px rgba(194, 161, 94, 0.12);
+  }
+
+  .score-glow-red {
+    text-shadow:
+      0 0 12px rgba(179, 107, 76, 0.35),
+      0 0 24px rgba(179, 107, 76, 0.2),
+      0 0 36px rgba(179, 107, 76, 0.12);
+  }
+
+  /* Parchment map texture background overlay */
+  .parchment-bg {
+    background-color: var(--background);
+    background-image:
+      linear-gradient(rgba(43, 43, 43, 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(43, 43, 43, 0.05) 1px, transparent 1px),
+      radial-gradient(rgba(179, 107, 76, 0.08) 1px, transparent 1px);
+    background-size: 140px 140px, 140px 140px, 280px 280px;
+    background-position: -1px -1px, -1px -1px, 0 0;
   }
 
   /* Subtle map line overlay (optional class) */
   .map-lines {
-    background-image: 
+    background-image:
       linear-gradient(rgba(43, 43, 43, 0.03) 1px, transparent 1px),
       linear-gradient(90deg, rgba(43, 43, 43, 0.03) 1px, transparent 1px);
     background-size: 40px 40px;
@@ -199,15 +179,15 @@
   /* Card hover states - earth tone shadows */
   .stat-card {
     @apply transition-all duration-300 ease-out;
-    box-shadow: 
+    box-shadow:
       0 2px 8px rgba(43, 43, 43, 0.08),
       0 1px 2px rgba(43, 43, 43, 0.04);
   }
-  
+
   .stat-card:hover {
     @apply transform -translate-y-1;
-    box-shadow: 
-      0 8px 24px rgba(124, 139, 111, 0.12), /* olive shadow */
+    box-shadow:
+      0 8px 24px rgba(124, 139, 111, 0.12),
       0 4px 8px rgba(43, 43, 43, 0.08);
   }
 
@@ -215,11 +195,11 @@
   .action-button {
     @apply transition-all duration-300 ease-out;
   }
-  
+
   .action-button:hover:not(:disabled) {
     @apply transform -translate-y-0.5;
-    box-shadow: 
-      0 6px 16px rgba(194, 161, 94, 0.25), /* brass glow */
+    box-shadow:
+      0 6px 16px rgba(194, 161, 94, 0.25),
       0 2px 8px rgba(43, 43, 43, 0.1);
   }
 }

@@ -22,34 +22,34 @@ export function FocusChart({ data, className = '' }: FocusChartProps) {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: 0.2 }}
-      className={`bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 ${className}`}
+      className={`bg-[color:var(--card)] rounded-2xl p-6 border border-[color:var(--border)] ${className}`}
     >
-      <h3 className="text-white text-lg font-semibold mb-4">Focus Timeline</h3>
+      <h3 className="text-[color:var(--foreground)] text-lg font-semibold mb-4">Focus Timeline</h3>
       <ResponsiveContainer width="100%" height={200}>
         <LineChart data={data}>
-          <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
+          <CartesianGrid strokeDasharray="3 3" stroke="rgba(43,43,43,0.12)" />
           <XAxis
             dataKey="time"
-            stroke="rgba(255,255,255,0.5)"
-            tick={{ fill: 'rgba(255,255,255,0.5)', fontSize: 12 }}
+            stroke="rgba(43,43,43,0.6)"
+            tick={{ fill: 'rgba(43,43,43,0.6)', fontSize: 12 }}
           />
           <YAxis
             domain={[0, 100]}
-            stroke="rgba(255,255,255,0.5)"
-            tick={{ fill: 'rgba(255,255,255,0.5)', fontSize: 12 }}
+            stroke="rgba(43,43,43,0.6)"
+            tick={{ fill: 'rgba(43,43,43,0.6)', fontSize: 12 }}
           />
           <Tooltip
             contentStyle={{
-              backgroundColor: 'rgba(0,0,0,0.8)',
-              border: '1px solid rgba(255,255,255,0.2)',
+              backgroundColor: '#F9F5EA',
+              border: '1px solid #D8CFBE',
               borderRadius: '8px',
-              color: 'white',
+              color: '#2B2B2B',
             }}
             formatter={(value: number) => [`${value}`, 'Focus Score']}
           />
           {/* Threshold lines */}
-          <ReferenceLine y={80} stroke="rgba(74,222,128,0.4)" strokeDasharray="5 5" label="" />
-          <ReferenceLine y={50} stroke="rgba(250,204,21,0.4)" strokeDasharray="5 5" label="" />
+          <ReferenceLine y={80} stroke="rgba(124,139,111,0.4)" strokeDasharray="5 5" label="" />
+          <ReferenceLine y={50} stroke="rgba(194,161,94,0.4)" strokeDasharray="5 5" label="" />
           {/* Focus score line with gradient effect */}
           <Line
             type="monotone"
@@ -57,13 +57,13 @@ export function FocusChart({ data, className = '' }: FocusChartProps) {
             stroke="url(#focusGradient)"
             strokeWidth={3}
             dot={false}
-            activeDot={{ r: 6, fill: '#a855f7', stroke: '#fff', strokeWidth: 2 }}
+            activeDot={{ r: 6, fill: '#C2A15E', stroke: '#2B2B2B', strokeWidth: 2 }}
           />
           <defs>
             <linearGradient id="focusGradient" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#4ade80" />
-              <stop offset="50%" stopColor="#facc15" />
-              <stop offset="100%" stopColor="#ef4444" />
+              <stop offset="0%" stopColor="#7C8B6F" />
+              <stop offset="50%" stopColor="#C2A15E" />
+              <stop offset="100%" stopColor="#B36B4C" />
             </linearGradient>
           </defs>
         </LineChart>

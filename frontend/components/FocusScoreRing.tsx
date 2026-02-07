@@ -27,9 +27,9 @@ export function FocusScoreRing({ score, size = 240, strokeWidth = 8, className =
 
   // Color based on score
   const getColor = (s: number) => {
-    if (s >= 80) return { ring: '#22c55e', glow: 'rgba(34, 197, 94, 0.4)', text: 'text-green-400' };
-    if (s >= 60) return { ring: '#eab308', glow: 'rgba(234, 179, 8, 0.3)', text: 'text-yellow-400' };
-    return { ring: '#ef4444', glow: 'rgba(239, 68, 68, 0.4)', text: 'text-red-400' };
+    if (s >= 80) return { ring: '#7C8B6F', glow: 'rgba(124, 139, 111, 0.35)', text: 'text-[#7C8B6F]' };
+    if (s >= 60) return { ring: '#C2A15E', glow: 'rgba(194, 161, 94, 0.3)', text: 'text-[#C2A15E]' };
+    return { ring: '#B36B4C', glow: 'rgba(179, 107, 76, 0.35)', text: 'text-[#B36B4C]' };
   };
 
   const color = getColor(score);
@@ -56,7 +56,7 @@ export function FocusScoreRing({ score, size = 240, strokeWidth = 8, className =
           cy={size / 2}
           r={radius}
           fill="none"
-          stroke="rgba(255,255,255,0.08)"
+          stroke="rgba(43,43,43,0.15)"
           strokeWidth={strokeWidth}
         />
         {/* Progress ring */}
@@ -80,10 +80,10 @@ export function FocusScoreRing({ score, size = 240, strokeWidth = 8, className =
 
       {/* Score text overlay */}
       <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <span className={`text-7xl font-bold tabular-nums ${color.text}`}>
+        <span className={`text-7xl font-bold tabular-nums font-mono ${color.text}`}>
           {rendered}
         </span>
-        <span className="text-purple-300/80 text-sm mt-1 uppercase tracking-widest">
+        <span className="text-[color:var(--muted-foreground)]/80 text-sm mt-1 uppercase tracking-widest">
           Focus Score
         </span>
       </div>
