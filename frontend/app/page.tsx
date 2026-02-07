@@ -4,7 +4,8 @@ import { useState, useEffect, useRef } from 'react';
 import { useSocket } from '@/hooks/useSocket';
 import { useFocusSession } from '@/hooks/useFocusSession';
 import { calculateFocusScore, getAttentionState } from '@/lib/humanConfig';
-import { AnimatedNumber } from '@/components/AnimatedNumber';
+import { AnimatedScore } from '@/components/AnimatedScore';
+import { FocusChart } from '@/components/FocusChart';
 
 export default function Home() {
   const { isConnected, joinSession, onFocusUpdate, onNudge } = useSocket();
@@ -15,6 +16,7 @@ export default function Home() {
   const [distractionCount, setDistractionCount] = useState(0);
   const [lastNudge, setLastNudge] = useState<string | null>(null);
   const [tokensEarned, setTokensEarned] = useState<number | null>(null);
+  const [focusHistory, setFocusHistory] = useState<{ time: string; score: number; nudge?: boolean }[]>([]);
   
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -67,6 +69,15 @@ export default function Home() {
       if (data.attentionState === 'distracted') {
         setDistractionCount(prev => prev + 1);
       }
+      
+      // Track focus history for chart
+      setFocusHistory(prev => [
+        ...prev,
+        {
+          time: formatTime(sessionTime),
+          score: data.focusScore,
+        }
+      ]);
     });
 
     onNudge((data) => {
@@ -155,6 +166,7 @@ export default function Home() {
       setDistractionCount(0);
       setFocusScore(95);
       setTokensEarned(null);
+      setFocusHistory([]);
     } catch (err) {
       console.error('Failed to start session:', err);
       alert('Camera permission required to start focus tracking');
@@ -224,13 +236,9 @@ export default function Home() {
         <div className="bg-white/10 backdrop-blur-lg rounded-3xl p-8 mb-6 border border-white/20">
           <div className="text-center mb-6">
             <div className="inline-block">
-              <AnimatedNumber
-                value={Math.round(focusScore)}
-                className={`text-8xl font-bold transition-all duration-500 ${
-                  focusScore >= 80 ? 'text-green-400' :
-                  focusScore >= 60 ? 'text-yellow-400' :
-                  'text-red-400'
-                }`}
+              <AnimatedScore
+                value={focusScore}
+                className="text-8xl font-bold"
               />
               <div className="text-purple-200 text-xl mt-2">Focus Score</div>
             </div>
@@ -272,6 +280,11 @@ export default function Home() {
             <div className="text-purple-200">Focused Time</div>
           </div>
         </div>
+
+        {/* Focus Timeline Chart (only show during active session with history) */}
+        {isActive && focusHistory.length > 0 && (
+          <FocusChart data={focusHistory} className="mb-8" />
+        )}
 
         {/* Tokens Earned (after session ends) */}
         {tokensEarned !== null && (
