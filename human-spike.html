@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Human.js Spike</title>
+    <!-- Corrected CDN URL (no trailing slash) -->
+    <script src="https://cdn.jsdelivr.net/npm/@vladmandic/human/dist/human.js"></script>
+    <style>
+        body { font-family: sans-serif; padding: 20px; }
+        #log { white-space: pre-wrap; background: #f0f0f0; padding: 10px; height: 200px; overflow-y: scroll; border: 1px solid #ccc; font-family: monospace; }
+        #status { font-weight: bold; margin-bottom: 10px; font-size: 1.2em; }
+        .container { display: flex; gap: 20px; }
+    </style>
+</head>
+<body>
+    <h1>Human.js Attention Spike</h1>
+    <div id="status">Loading library...</div>
+    <div class="container">
+        <div>
+            <video id="video" width="640" height="480" autoplay muted playsinline></video>
+            <canvas id="canvas" width="640" height="480" style="position: absolute; top: 0; left: 0; display: none;"></canvas>
+        </div>
+        <div style="flex: 1;">
+            <h3>Log</h3>
+            <div id="log"></div>
+        </div>
+    </div>
+
+    <script>
+        const logEl = document.getElementById('log');
+        const statusEl = document.getElementById('status');
+        const videoEl = document.getElementById('video');
+
+        function log(msg) {
+            const time = new Date().toLocaleTimeString();
+            logEl.textContent = `[${time}] ${msg}\n` + logEl.textContent.substring(0, 2000);
+            console.log(msg);
+        }
+
+        // Optimized config for spike
+        const config = {
+            backend: 'webgl',
+            modelBasePath: 'https://cdn.jsdelivr.net/npm/@vladmandic/human/models/',
+            face: { 
+                enabled: true, 
+                detector: { rotation: true }, // We need rotation for attention
+                mesh: { enabled: false },     // Disable mesh for speed
+                iris: { enabled: false }, 
+                description: { enabled: false },
+                emotion: { enabled: false }
+            },
+            body: { enabled: false },
+            hand: { enabled: false },
+            object: { enabled: false },
+            gesture: { enabled: false }
+        };
+
+        let human;
+
+        async function main() {
+            try {
+                statusEl.textContent = 'Initializing Human...';
+                human = new Human.Human(config);
+                
+                // Warmup
+                await human.load();
+                statusEl.textContent = 'Models loaded. Starting camera...';
+                log('Human.js version: ' + human.version);
+
+                const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } });
+                videoEl.srcObject = stream;
+                
+                await new Promise(resolve => {
+                    videoEl.onloadeddata = () => {
+                        videoEl.play();
+                        resolve();
+                    };
+                });
+                
+                statusEl.textContent = 'Tracking...';
+                log(`Camera active: ${videoEl.videoWidth}x${videoEl.videoHeight}`);
+
+                detectLoop();
+            } catch (err) {
+                statusEl.textContent = 'Error: ' + err.message;
+                log('FATAL: ' + err.message);
+                console.error(err);
+            }
+        }
+
+        async function detectLoop() {
+            if (!videoEl.paused && !videoEl.ended) {
+                // Performance: only detect face
+                const result = await human.detect(videoEl);
+                
+                if (result.face && result.face.length > 0) {
+                    const face = result.face[0];
+                    const rotation = face.rotation || { angle: { roll: 0, yaw: 0, pitch: 0 } };
+                    
+                    const yaw = rotation.angle.yaw;   // Left/Right
+                    const pitch = rotation.angle.pitch; // Up/Down
+                    
+                    // HEURISTIC: "Looking at screen"
+                    // Typically +/- 0.3 radians is a good starting threshold
+                    const isFocused = Math.abs(yaw) < 0.35 && Math.abs(pitch) < 0.35;
+                    
+                    const state = isFocused ? '✅ FOCUSED' : '❌ DISTRACTED';
+                    const color = isFocused ? 'green' : 'red';
+                    
+                    statusEl.innerHTML = `<span style="color:${color}">${state}</span> (Yaw: ${yaw.toFixed(2)}, Pitch: ${pitch.toFixed(2)})`;
+                    
+                    // Log occasionally
+                    if (Math.random() < 0.02) {
+                        log(`${state} - y:${yaw.toFixed(2)} p:${pitch.toFixed(2)}`);
+                    }
+                } else {
+                    statusEl.textContent = '⚠️ No face detected';
+                }
+
+                // Loop
+                requestAnimationFrame(detectLoop);
+            }
+        }
+
+        main();
+    </script>
+</body>
+</html>
