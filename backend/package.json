@@ -16,7 +16,7 @@
     "dotenv": "^16.4.1",
     "@solana/web3.js": "^1.89.1",
     "@solana/spl-token": "^0.4.3",
-    "@google/generative-ai": "^0.21.0",
+    "@google/genai": "^1.0.0",
     "uuid": "^9.0.0",
     "helmet": "^7.1.0",
     "compression": "^1.7.4",
