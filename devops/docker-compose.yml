@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  focusflow:
+    build:
+      context: ..
+      dockerfile: devops/Dockerfile
+    ports:
+      - "3001:3001"
+    env_file:
+      - ../.env
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:3001/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
