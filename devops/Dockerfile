@@ -1,18 +1,32 @@
-FROM node:20-alpine
+# Stage 1: Build frontend
+FROM node:20-alpine AS frontend-build
+WORKDIR /app/frontend
+COPY frontend/package*.json ./
+RUN npm ci
+COPY frontend/ ./
+ENV NEXT_PUBLIC_API_URL=REPLACE_AT_RUNTIME
+RUN npm run build
 
+# Stage 2: Production
+FROM node:20-alpine
 WORKDIR /app
 
-# Backend
+# Backend deps
 COPY backend/package*.json ./backend/
 RUN cd backend && npm ci --production
 
+# Backend source
 COPY backend/ ./backend/
 
-# Frontend (built assets)
-COPY frontend/.next/standalone ./frontend/standalone
-COPY frontend/.next/static ./frontend/standalone/.next/static
-COPY frontend/public ./frontend/standalone/public
+# Frontend standalone build
+COPY --from=frontend-build /app/frontend/.next/standalone ./frontend/
+COPY --from=frontend-build /app/frontend/.next/static ./frontend/.next/static
+COPY --from=frontend-build /app/frontend/public ./frontend/public
 
-EXPOSE 3001
+# Start script
+COPY devops/start.sh ./start.sh
+RUN chmod +x start.sh
 
-CMD ["node", "backend/src/index.js"]
+EXPOSE 3000 3001
+
+CMD ["./start.sh"]

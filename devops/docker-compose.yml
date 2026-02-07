@@ -6,9 +6,14 @@ services:
       context: ..
       dockerfile: devops/Dockerfile
     ports:
+      - "3000:3000"
       - "3001:3001"
+    environment:
+      - NODE_ENV=production
+      - PORT=3001
+      - NEXT_PUBLIC_API_URL=http://localhost:3001
     env_file:
-      - ../.env
+      - ../backend/.env
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "wget", "-q", "--spider", "http://localhost:3001/health"]
