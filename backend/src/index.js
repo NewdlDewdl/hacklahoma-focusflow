@@ -41,6 +41,7 @@ app.get('/health', (req, res) => {
 app.use('/api/sessions', require('./routes/sessions'));
 app.use('/api/users', require('./routes/users'));
 app.use('/api/analyze', require('./routes/analyze'));
+app.use('/api/rooms', require('./routes/rooms'));
 
 // Socket.io for real-time focus updates + multiplayer
 io.on('connection', (socket) => {
