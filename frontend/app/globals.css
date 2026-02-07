@@ -49,7 +49,7 @@
 
 :root {
   --radius: 0.625rem;
-  --font-geist-sans: 'EB Garamond', serif;
+  --font-geist-sans: 'Satoshi', system-ui, sans-serif;
   --font-geist-mono: 'IBM Plex Mono', monospace;
 
   --background: #F5F1E6; /* parchment */
@@ -130,6 +130,8 @@
 
 /* Custom animations and effects */
 @layer components {
+  .font-title-serif { font-family: 'EB Garamond', serif; }
+
   /* Glow effect for focus score (subtle, vintage) */
   .score-glow-green {
     text-shadow:
@@ -152,28 +154,27 @@
       0 0 36px rgba(179, 107, 76, 0.12);
   }
 
-  /* Parchment map texture background overlay */
+  /* Subtle parchment background with map lines */
   .parchment-bg {
     background-color: var(--background);
     background-image:
-      linear-gradient(rgba(43, 43, 43, 0.05) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(43, 43, 43, 0.05) 1px, transparent 1px),
-      radial-gradient(rgba(179, 107, 76, 0.08) 1px, transparent 1px);
-    background-size: 140px 140px, 140px 140px, 280px 280px;
+      linear-gradient(rgba(43, 43, 43, 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(43, 43, 43, 0.03) 1px, transparent 1px),
+      radial-gradient(rgba(179, 107, 76, 0.04) 1px, transparent 1px);
+    background-size: 160px 160px, 160px 160px, 320px 320px;
     background-position: -1px -1px, -1px -1px, 0 0;
   }
 
-  /* Subtle map line overlay (optional class) */
   .map-lines {
     background-image:
-      linear-gradient(rgba(43, 43, 43, 0.03) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(43, 43, 43, 0.03) 1px, transparent 1px);
-    background-size: 40px 40px;
+      linear-gradient(rgba(43, 43, 43, 0.02) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(43, 43, 43, 0.02) 1px, transparent 1px);
+    background-size: 48px 48px;
   }
 
-  /* Paper texture overlay */
+  /* Paper texture overlay (very subtle) */
   .paper-texture {
-    background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' /%3E%3CfeColorMatrix values='0 0 0 0 0, 0 0 0 0 0, 0 0 0 0 0, 0 0 0 0.02 0'/%3E%3C/filter%3E%3Crect width='100' height='100' filter='url(%23noise)' opacity='0.4'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' /%3E%3CfeColorMatrix values='0 0 0 0 0, 0 0 0 0 0, 0 0 0 0 0, 0 0 0 0.015 0'/%3E%3C/filter%3E%3Crect width='100' height='100' filter='url(%23noise)' opacity='0.25'/%3E%3C/svg%3E");
   }
 
   /* Card hover states - earth tone shadows */

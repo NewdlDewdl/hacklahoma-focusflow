@@ -16,7 +16,7 @@ export function StatCard({ value, label, icon, delay = 0 }: StatCardProps) {
       initial={{ opacity: 1, y: 0 }}
       animate={{ opacity: 1, y: 0 }}
       whileHover={{ scale: 1.02, y: -1 }}
-      className="group relative bg-[color:var(--card)] rounded-2xl p-6 border border-[color:var(--border)] text-center overflow-hidden transition-all"
+      className="group relative bg-card paper-texture rounded-2xl p-6 border border-border text-center overflow-hidden transition-all"
     >
       {/* Subtle gradient overlay on hover */}
       <div className="absolute inset-0 bg-gradient-to-br from-[#C2A15E]/0 to-[#B36B4C]/0 group-hover:from-[#C2A15E]/6 group-hover:to-[#B36B4C]/6 transition-all duration-500" />

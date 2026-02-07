@@ -18,12 +18,10 @@ export default function RootLayout({
           href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap"
           rel="stylesheet"
         />
+        <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap" rel="stylesheet" />
         <script src="https://cdn.jsdelivr.net/npm/@vladmandic/human/dist/human.js" defer></script>
       </head>
-      <body
-        className="antialiased parchment-bg"
-        style={{ fontFamily: 'EB Garamond, serif' }}
-      >
+      <body className="font-sans antialiased">
         {children}
       </body>
     </html>

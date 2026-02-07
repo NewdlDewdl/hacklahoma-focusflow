@@ -241,11 +241,11 @@ export default function Home() {
   };
 
   return (
-    <main className="min-h-screen parchment-bg p-8 text-[color:var(--foreground)]">
+    <main className="min-h-screen bg-background map-lines p-8 text-foreground">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="text-center mb-12">
-          <h1 className="text-5xl font-bold text-[color:var(--foreground)] mb-4 tracking-tight">
+          <h1 className="text-5xl font-bold text-foreground mb-4 tracking-tight font-title-serif">
             FocusFlow
           </h1>
           <p className="text-[color:var(--muted-foreground)] text-lg">
@@ -358,7 +358,7 @@ export default function Home() {
 
         {/* Tokens Earned (after session ends) */}
         {tokensEarned !== null && (
-          <div className="mb-6 bg-[#7C8B6F]/15 border border-[#7C8B6F]/40 rounded-2xl p-6 text-center">
+          <div className="mb-6 bg-[#7C8B6F]/15 border border-[#7C8B6F]/40 rounded-2xl p-6 text-center paper-texture">
             <p className="text-[color:var(--foreground)] text-2xl font-bold mb-2">
               🪙 {tokensEarned} FOCUS Tokens Earned!
             </p>

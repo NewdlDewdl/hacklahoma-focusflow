@@ -48,7 +48,7 @@ export function RoomLeaderboard({
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-[color:var(--card)] rounded-3xl p-6 border border-[color:var(--border)]"
+      className="bg-card paper-texture rounded-3xl p-6 border border-border"
     >
       <div className="flex items-center justify-between mb-4">
         <div>

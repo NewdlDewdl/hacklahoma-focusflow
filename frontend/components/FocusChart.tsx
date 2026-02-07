@@ -22,7 +22,7 @@ export function FocusChart({ data, className = '' }: FocusChartProps) {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: 0.2 }}
-      className={`bg-[color:var(--card)] rounded-2xl p-6 border border-[color:var(--border)] ${className}`}
+      className={`bg-card paper-texture rounded-2xl p-6 border border-border ${className}`}
     >
       <h3 className="text-[color:var(--foreground)] text-lg font-semibold mb-4">Focus Timeline</h3>
       <ResponsiveContainer width="100%" height={200}>

@@ -32,7 +32,7 @@ export function RoomLobby({ lobby, onCreateRoom, onJoinRoom, onRefresh }: RoomLo
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-[color:var(--card)] rounded-3xl p-8 border border-[color:var(--border)]"
+      className="bg-card paper-texture rounded-3xl p-8 border border-border"
     >
       <h2 className="text-2xl font-bold text-[color:var(--foreground)] mb-6 text-center">
         🎮 Multiplayer Focus
