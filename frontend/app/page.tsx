@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useSocket } from '@/hooks/useSocket';
 import { useFocusSession } from '@/hooks/useFocusSession';
 import { calculateFocusScore, getAttentionState } from '@/lib/humanConfig';
+import { AnimatedNumber } from '@/components/AnimatedNumber';
 
 // @ts-ignore - Human.js loaded via CDN in layout
 declare const Human: any;
@@ -214,13 +215,14 @@ export default function Home() {
         <div className="bg-white/10 backdrop-blur-lg rounded-3xl p-8 mb-6 border border-white/20">
           <div className="text-center mb-6">
             <div className="inline-block">
-              <div className={`text-8xl font-bold transition-all duration-500 ${
-                focusScore >= 80 ? 'text-green-400' :
-                focusScore >= 60 ? 'text-yellow-400' :
-                'text-red-400'
-              }`}>
-                {Math.round(focusScore)}
-              </div>
+              <AnimatedNumber
+                value={Math.round(focusScore)}
+                className={`text-8xl font-bold transition-all duration-500 ${
+                  focusScore >= 80 ? 'text-green-400' :
+                  focusScore >= 60 ? 'text-yellow-400' :
+                  'text-red-400'
+                }`}
+              />
               <div className="text-purple-200 text-xl mt-2">Focus Score</div>
             </div>
           </div>
