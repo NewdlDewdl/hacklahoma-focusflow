@@ -21,10 +21,10 @@ app.get('/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
-// Routes (will be added by Clawd for analyze, sessions, etc.)
-// app.use('/api/analyze', require('./routes/analyze'));
-// app.use('/api/sessions', require('./routes/sessions'));
-// app.use('/api/users', require('./routes/users'));
+// Routes
+app.use('/api/sessions', require('./routes/sessions'));
+app.use('/api/users', require('./routes/users'));
+// app.use('/api/analyze', require('./routes/analyze')); // Clawd wiring this up
 
 // Socket.io for real-time focus updates + multiplayer
 io.on('connection', (socket) => {
