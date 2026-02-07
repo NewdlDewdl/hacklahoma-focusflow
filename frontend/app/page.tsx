@@ -3,13 +3,17 @@
 import { useState, useEffect, useRef } from 'react';
 import { useSocket } from '@/hooks/useSocket';
 import { useFocusSession } from '@/hooks/useFocusSession';
+import { useRoom } from '@/hooks/useRoom';
 import { calculateFocusScore, getAttentionState } from '@/lib/humanConfig';
 import { AnimatedScore } from '@/components/AnimatedScore';
 import { FocusChart } from '@/components/FocusChart';
+import { RoomLobby } from '@/components/RoomLobby';
+import { RoomLeaderboard } from '@/components/RoomLeaderboard';
 
 export default function Home() {
-  const { isConnected, joinSession, onFocusUpdate, onNudge } = useSocket();
+  const { socket, isConnected, joinSession, onFocusUpdate, onNudge } = useSocket();
   const { session, user, isActive, startSession, endSession, sendFocusUpdate } = useFocusSession();
+  const { room, lobby, isInRoom, peerScores, fetchLobby, createRoom, joinRoom, leaveRoom } = useRoom(socket);
   
   const [focusScore, setFocusScore] = useState(95);
   const [sessionTime, setSessionTime] = useState(0);
@@ -17,6 +21,9 @@ export default function Home() {
   const [lastNudge, setLastNudge] = useState<string | null>(null);
   const [tokensEarned, setTokensEarned] = useState<number | null>(null);
   const [focusHistory, setFocusHistory] = useState<{ time: string; score: number; nudge?: boolean }[]>([]);
+  const [mode, setMode] = useState<'solo' | 'multiplayer'>('solo');
+  const [displayName, setDisplayName] = useState('');
+  const [userId] = useState(() => typeof window !== 'undefined' ? `user_${Math.random().toString(36).slice(2, 8)}` : 'user_anon');
   
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -133,6 +140,16 @@ export default function Home() {
           
           // Update local state
           setFocusScore(score);
+
+          // Broadcast to room if in multiplayer
+          if (isInRoom && room && socket) {
+            socket.emit('focus:broadcast', {
+              roomId: room.id,
+              userId,
+              displayName: displayName || 'Anonymous',
+              focusScore: score,
+            });
+          }
         }
       } catch (err) {
         console.error('Human.js detection error:', err);
@@ -141,7 +158,26 @@ export default function Home() {
 
     const interval = setInterval(detectLoop, 5000); // Every 5 seconds
     return () => clearInterval(interval);
-  }, [isActive, sendFocusUpdate]);
+  }, [isActive, sendFocusUpdate, isInRoom, room, socket, userId, displayName]);
+
+  // Room handlers
+  const handleCreateRoom = async (name: string) => {
+    const roomId = await createRoom(name);
+    if (roomId) {
+      await joinRoom(roomId, userId, displayName || 'Anonymous');
+    }
+  };
+
+  const handleJoinRoom = async (roomId: string) => {
+    await joinRoom(roomId, userId, displayName || 'Anonymous');
+  };
+
+  const handleLeaveRoom = async () => {
+    if (room) {
+      await leaveRoom(room.id, userId);
+      setMode('solo');
+    }
+  };
 
   const handleStartSession = async () => {
     try {
@@ -216,6 +252,72 @@ export default function Home() {
             Socket: {isConnected ? '🟢 Connected' : '🔴 Disconnected'}
           </div>
         </div>
+
+        {/* Mode Toggle (only when not in active session) */}
+        {!isActive && (
+          <div className="flex justify-center gap-4 mb-8">
+            <button
+              onClick={() => setMode('solo')}
+              className={`px-6 py-2 rounded-xl font-semibold transition-all ${
+                mode === 'solo'
+                  ? 'bg-purple-500 text-white shadow-lg shadow-purple-500/25'
+                  : 'bg-white/5 text-purple-300 hover:bg-white/10'
+              }`}
+            >
+              🎯 Solo Focus
+            </button>
+            <button
+              onClick={() => { setMode('multiplayer'); fetchLobby(); }}
+              className={`px-6 py-2 rounded-xl font-semibold transition-all ${
+                mode === 'multiplayer'
+                  ? 'bg-purple-500 text-white shadow-lg shadow-purple-500/25'
+                  : 'bg-white/5 text-purple-300 hover:bg-white/10'
+              }`}
+            >
+              🎮 Multiplayer
+            </button>
+          </div>
+        )}
+
+        {/* Display Name Input (multiplayer) */}
+        {mode === 'multiplayer' && !isInRoom && !isActive && (
+          <div className="mb-6">
+            <input
+              type="text"
+              placeholder="Your display name..."
+              value={displayName}
+              onChange={(e) => setDisplayName(e.target.value)}
+              className="w-full max-w-xs mx-auto block bg-white/5 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-purple-300/50 focus:outline-none focus:border-purple-400 text-center"
+              maxLength={20}
+            />
+          </div>
+        )}
+
+        {/* Room Lobby (multiplayer, not yet in room) */}
+        {mode === 'multiplayer' && !isInRoom && !isActive && (
+          <div className="mb-8">
+            <RoomLobby
+              lobby={lobby}
+              onCreateRoom={handleCreateRoom}
+              onJoinRoom={handleJoinRoom}
+              onRefresh={fetchLobby}
+            />
+          </div>
+        )}
+
+        {/* Room Leaderboard (in room, during session) */}
+        {isInRoom && room && (
+          <div className="mb-6">
+            <RoomLeaderboard
+              roomName={room.name}
+              roomCode={room.id}
+              myDisplayName={displayName || 'Anonymous'}
+              myScore={focusScore}
+              peerScores={peerScores}
+              onLeave={handleLeaveRoom}
+            />
+          </div>
+        )}
 
         {/* Nudge Alert */}
         {lastNudge && (

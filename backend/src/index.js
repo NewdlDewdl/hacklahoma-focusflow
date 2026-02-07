@@ -55,6 +55,17 @@ io.on('connection', (socket) => {
   socket.on('leave:room', (roomId) => {
     socket.leave(roomId);
   });
+
+  // Broadcast focus score to room peers
+  socket.on('focus:broadcast', (data) => {
+    if (data.roomId) {
+      socket.to(`room:${data.roomId}`).emit('room:focus-update', {
+        userId: data.userId,
+        displayName: data.displayName,
+        focusScore: data.focusScore,
+      });
+    }
+  });
   
   socket.on('disconnect', () => {
     console.log(`🔌 Client disconnected: ${socket.id}`);
