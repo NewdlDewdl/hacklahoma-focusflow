@@ -16,11 +16,16 @@ export const humanConfig = {
   gesture: { enabled: false }
 };
 
-// Attention detection threshold (radians)
+// Attention detection thresholds (radians)
 export const FOCUS_THRESHOLD = {
   YAW: 0.35,   // Left/Right head rotation
   PITCH: 0.35  // Up/Down head rotation
 };
+
+// Edge-case scores
+export const NO_FACE_SCORE = 10;           // No face detected — user is away/turned away
+export const NO_ROTATION_SCORE = 30;       // Face detected but rotation data missing
+export const DETECTION_INTERVAL_MS = 2000; // Detection loop frequency (ms) — 2s for responsive demos
 
 export function calculateFocusScore(yaw: number, pitch: number): number {
   // Calculate how "centered" the user is looking

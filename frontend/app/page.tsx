@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import { useSocket } from '@/hooks/useSocket';
 import { useFocusSession } from '@/hooks/useFocusSession';
 import { useRoom } from '@/hooks/useRoom';
-import { calculateFocusScore, getAttentionState } from '@/lib/humanConfig';
+import { calculateFocusScore, getAttentionState, NO_FACE_SCORE, NO_ROTATION_SCORE, DETECTION_INTERVAL_MS } from '@/lib/humanConfig';
 import { AnimatedScore } from '@/components/AnimatedScore';
 import { FocusChart } from '@/components/FocusChart';
 import { FocusScoreRing } from '@/components/FocusScoreRing';
@@ -35,6 +35,8 @@ export default function Home() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const humanRef = useRef<any>(null);
   const streamRef = useRef<MediaStream | null>(null);
+  const sessionTimeRef = useRef(0);
+  const wasDistractedRef = useRef(false);
 
   // Initialize Human.js (wait for CDN script to load)
   useEffect(() => {
@@ -78,19 +80,8 @@ export default function Home() {
   // Listen for real-time focus updates from backend
   useEffect(() => {
     onFocusUpdate((data) => {
+      // Server-confirmed score (supplements detection loop's local update)
       setFocusScore(data.focusScore);
-      if (data.attentionState === 'distracted') {
-        setDistractionCount(prev => prev + 1);
-      }
-
-      // Track focus history for chart
-      setFocusHistory(prev => [
-        ...prev,
-        {
-          time: formatTime(sessionTime),
-          score: data.focusScore,
-        }
-      ]);
     });
 
     onNudge((data) => {
@@ -111,12 +102,15 @@ export default function Home() {
     });
   }, [onFocusUpdate, onNudge]);
 
-  // Session timer
+  // Session timer (also syncs ref for non-stale access in detection loop)
   useEffect(() => {
     if (!isActive) return;
 
     const interval = setInterval(() => {
-      setSessionTime(prev => prev + 1);
+      setSessionTime(prev => {
+        sessionTimeRef.current = prev + 1;
+        return prev + 1;
+      });
     }, 1000);
 
     return () => clearInterval(interval);
@@ -130,39 +124,71 @@ export default function Home() {
       try {
         const result = await humanRef.current.detect(videoRef.current);
 
+        let score: number;
+        let state: 'focused' | 'distracted';
+        let meta = { yaw: 0, pitch: 0, roll: 0 };
+        let distType: string | undefined;
+
         if (result.face && result.face.length > 0) {
           const face = result.face[0];
-          const rotation = face.rotation?.angle || { yaw: 0, pitch: 0, roll: 0 };
+          const rotation = face.rotation?.angle;
 
-          const score = calculateFocusScore(rotation.yaw, rotation.pitch);
-          const state = getAttentionState(score);
-
-          // Send to backend
-          await sendFocusUpdate(score, state, {
-            yaw: rotation.yaw,
-            pitch: rotation.pitch,
-            roll: rotation.roll
-          });
-
-          // Update local state
-          setFocusScore(score);
-
-          // Broadcast to room if in multiplayer
-          if (isInRoom && room && socket) {
-            socket.emit('focus:broadcast', {
-              roomId: room.id,
-              userId,
-              displayName: displayName || 'Anonymous',
-              focusScore: score,
-            });
+          if (rotation && typeof rotation.yaw === 'number') {
+            score = calculateFocusScore(rotation.yaw, rotation.pitch);
+            state = getAttentionState(score);
+            meta = {
+              yaw: rotation.yaw,
+              pitch: rotation.pitch,
+              roll: rotation.roll || 0,
+            };
+          } else {
+            // Face found but rotation data unavailable
+            score = NO_ROTATION_SCORE;
+            state = 'distracted';
           }
+        } else {
+          // No face detected — user looked away or left the frame
+          score = NO_FACE_SCORE;
+          state = 'distracted';
+          distType = 'absent';
         }
+
+        // Update local state immediately (don't wait for backend round-trip)
+        setFocusScore(score);
+
+        // Track distraction episodes (transitions only, not every frame)
+        if (state === 'distracted' && !wasDistractedRef.current) {
+          setDistractionCount(prev => prev + 1);
+        }
+        wasDistractedRef.current = state === 'distracted';
+
+        // Track focus history for chart
+        setFocusHistory(prev => [
+          ...prev,
+          { time: formatTime(sessionTimeRef.current), score },
+        ]);
+
+        // Broadcast to room if in multiplayer
+        if (isInRoom && room && socket) {
+          socket.emit('focus:broadcast', {
+            roomId: room.id,
+            userId,
+            displayName: displayName || 'Anonymous',
+            focusScore: score,
+          });
+        }
+
+        // Send to backend (fire-and-forget — triggers nudge logic + DB persist)
+        sendFocusUpdate(score, state, meta, distType).catch(err => {
+          console.warn('Backend focus update failed:', err);
+        });
       } catch (err) {
         console.error('Human.js detection error:', err);
       }
     };
 
-    const interval = setInterval(detectLoop, 5000); // Every 5 seconds
+    detectLoop(); // Run immediately on session start
+    const interval = setInterval(detectLoop, DETECTION_INTERVAL_MS);
     return () => clearInterval(interval);
   }, [isActive, sendFocusUpdate, isInRoom, room, socket, userId, displayName]);
 
@@ -216,6 +242,8 @@ export default function Home() {
       setFocusScore(95);
       setTokensEarned(null);
       setFocusHistory([]);
+      sessionTimeRef.current = 0;
+      wasDistractedRef.current = false;
     } catch (err) {
       console.error('Failed to start session:', err);
       alert('Camera permission required to start focus tracking');

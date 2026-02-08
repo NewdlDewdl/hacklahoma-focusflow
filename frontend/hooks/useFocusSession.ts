@@ -32,7 +32,7 @@ interface UseFocusSessionReturn {
   isActive: boolean;
   startSession: (mode?: 'solo' | 'multiplayer', roomId?: string) => Promise<Session>;
   endSession: () => Promise<SessionResult | null>;
-  sendFocusUpdate: (focusScore: number, attentionState: string, metadata?: object) => Promise<void>;
+  sendFocusUpdate: (focusScore: number, attentionState: string, metadata?: object, distractionType?: string) => Promise<void>;
 }
 
 export function useFocusSession(): UseFocusSessionReturn {
@@ -92,19 +92,25 @@ export function useFocusSession(): UseFocusSessionReturn {
   const sendFocusUpdate = useCallback(async (
     focusScore: number,
     attentionState: string,
-    metadata?: object
+    metadata?: object,
+    distractionType?: string
   ) => {
     if (!session) return;
+
+    const body: Record<string, unknown> = {
+      sessionId: session._id,
+      focusScore,
+      attentionState,
+      metadata,
+    };
+    if (distractionType) {
+      body.distractionType = distractionType;
+    }
 
     await fetch(`${API_URL}/api/analyze`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        sessionId: session._id,
-        focusScore,
-        attentionState,
-        metadata,
-      }),
+      body: JSON.stringify(body),
     });
   }, [session]);
 
