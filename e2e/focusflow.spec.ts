@@ -2,17 +2,17 @@ import { test, expect } from '@playwright/test';
 
 test.describe('FocusFlow E2E', () => {
   test('landing page loads with FocusFlow title', async ({ page }) => {
-    await page.goto('http://localhost:3000');
+    await page.goto('http://localhost:3002');
     await expect(page.locator('h1')).toContainText('FocusFlow');
   });
 
   test('focus score display is visible', async ({ page }) => {
-    await page.goto('http://localhost:3000');
+    await page.goto('http://localhost:3002');
     await expect(page.getByText('Focus Score')).toBeVisible();
   });
 
   test('solo/multiplayer mode toggle exists', async ({ page }) => {
-    await page.goto('http://localhost:3000');
+    await page.goto('http://localhost:3002');
     await expect(page.getByText('Solo Focus')).toBeVisible();
     await expect(page.getByText('Multiplayer')).toBeVisible();
   });
@@ -20,7 +20,7 @@ test.describe('FocusFlow E2E', () => {
   test('start session button works (solo mode)', async ({ page, context }) => {
     // Grant camera permission
     await context.grantPermissions(['camera']);
-    await page.goto('http://localhost:3000');
+    await page.goto('http://localhost:3002');
     const startBtn = page.getByRole('button', { name: /start focus session/i });
     await expect(startBtn).toBeVisible();
     // Click start (may fail on webcam in CI, but button should respond)
@@ -34,7 +34,7 @@ test.describe('FocusFlow E2E', () => {
   });
 
   test('multiplayer mode shows room lobby', async ({ page }) => {
-    await page.goto('http://localhost:3000');
+    await page.goto('http://localhost:3002');
     await page.getByText('Multiplayer').click();
     // Should show room lobby UI
     await expect(page.getByText('Multiplayer Focus')).toBeVisible();
@@ -43,7 +43,7 @@ test.describe('FocusFlow E2E', () => {
   });
 
   test('can switch to create room tab', async ({ page }) => {
-    await page.goto('http://localhost:3000');
+    await page.goto('http://localhost:3002');
     await page.getByText('Multiplayer').click();
     await page.getByRole('button', { name: 'Create Room' }).click();
     await expect(page.getByPlaceholder(/room name/i)).toBeVisible();
@@ -51,19 +51,19 @@ test.describe('FocusFlow E2E', () => {
   });
 
   test('session timer and stats visible', async ({ page }) => {
-    await page.goto('http://localhost:3000');
+    await page.goto('http://localhost:3002');
     await expect(page.getByText('Session Time')).toBeVisible();
     await expect(page.getByText('Distractions')).toBeVisible();
     await expect(page.getByText('Focused Time')).toBeVisible();
   });
 
   test('privacy notice is visible', async ({ page }) => {
-    await page.goto('http://localhost:3000');
+    await page.goto('http://localhost:3002');
     await expect(page.getByText(/not recording/i)).toBeVisible();
   });
 
   test('no error state on page load', async ({ page }) => {
-    await page.goto('http://localhost:3000');
+    await page.goto('http://localhost:3002');
     // Should not show connection warning when connected
     await page.waitForTimeout(2000);
     const warning = page.getByText(/connecting to server/i);

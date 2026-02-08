@@ -1,0 +1,27 @@
+{
+  "name": "hacklahoma-focusflow",
+  "version": "1.0.0",
+  "description": "Instant-demo ADHD focus coach.",
+  "main": "screenshot-ui.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NewdlDewdl/hacklahoma-focusflow.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/NewdlDewdl/hacklahoma-focusflow/issues"
+  },
+  "homepage": "https://github.com/NewdlDewdl/hacklahoma-focusflow#readme",
+  "devDependencies": {
+    "@playwright/test": "^1.58.2"
+  }
+}

@@ -1,0 +1,54 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - main [ref=e2]:
+    - navigation [ref=e3]:
+      - generic [ref=e4]:
+        - generic [ref=e5]: F
+        - generic [ref=e6]: FocusFlow
+      - generic [ref=e7]:
+        - button "📊 Dashboard" [ref=e8]:
+          - generic [ref=e9]:
+            - generic [ref=e10]: 📊
+            - text: Dashboard
+        - button "🎯 Focus Solo" [ref=e11]:
+          - generic [ref=e13]:
+            - generic [ref=e14]: 🎯
+            - text: Focus Solo
+        - button "👥 Multiplayer" [ref=e15]:
+          - generic [ref=e16]:
+            - generic [ref=e17]: 👥
+            - text: Multiplayer
+        - button "⚙️ Settings" [ref=e18]:
+          - generic [ref=e19]:
+            - generic [ref=e20]: ⚙️
+            - text: Settings
+      - generic [ref=e23]: Connected
+    - generic [ref=e24]:
+      - generic [ref=e25]:
+        - heading "Solo Focus" [level=1] [ref=e26]
+        - paragraph [ref=e27]: Deep work with AI coaching
+      - generic [ref=e29]:
+        - img [ref=e31]
+        - generic [ref=e34]:
+          - generic [ref=e35]: "95"
+          - generic [ref=e36]: Focus Score
+      - generic [ref=e37]:
+        - generic [ref=e40]:
+          - generic [ref=e41]: 0:00
+          - generic [ref=e42]: Session Time
+        - generic [ref=e45]:
+          - generic [ref=e46]: "0"
+          - generic [ref=e47]: Distractions
+        - generic [ref=e50]:
+          - generic [ref=e51]: 0:00
+          - generic [ref=e52]: Focused Time
+      - button "Start Focus Session" [ref=e54]: Start Focus Session
+      - generic [ref=e56]:
+        - paragraph [ref=e57]: 🔒 Not recording - only analyzing focus. Frames discarded immediately.
+        - paragraph [ref=e58]: "Camera: ⚫ Inactive | Session: ⚫ Inactive"
+  - button "Open Next.js Dev Tools" [ref=e64] [cursor=pointer]:
+    - img [ref=e65]
+  - alert [ref=e68]
+```

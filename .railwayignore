@@ -1,0 +1,15 @@
+node_modules
+frontend/.next
+backend/node_modules
+playwright-training
+.e2e
+.local
+.bun
+.claude
+Desktop
+Library
+Music
+Pictures
+Projects
+bin
+go
