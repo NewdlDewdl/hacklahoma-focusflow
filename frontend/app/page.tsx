@@ -13,6 +13,7 @@ import { RoomLobby } from '@/components/RoomLobby';
 import { RoomLeaderboard } from '@/components/RoomLeaderboard';
 import { StatCard } from '@/components/StatCard';
 import { NavBar } from '@/components/NavBar';
+import { AnalyticsDashboard } from '@/components/AnalyticsDashboard';
 
 type Tab = 'dashboard' | 'solo' | 'multiplayer' | 'settings';
 
@@ -291,23 +292,8 @@ export default function Home() {
       />
 
       <div className="max-w-4xl mx-auto pt-24">
-        {/* Dashboard Placeholder */}
-        {activeTab === 'dashboard' && (
-          <div className="text-center py-12">
-            <h2 className="text-4xl font-bold mb-4 font-title-serif">Your Dashboard</h2>
-            <div className="grid grid-cols-2 gap-6 max-w-2xl mx-auto">
-              <div className="bg-card paper-texture p-6 rounded-2xl border border-border">
-                <div className="text-3xl font-bold mb-1">7</div>
-                <div className="text-sm text-muted-foreground uppercase tracking-wider">Day Streak</div>
-              </div>
-              <div className="bg-card paper-texture p-6 rounded-2xl border border-border">
-                <div className="text-3xl font-bold mb-1">1,240</div>
-                <div className="text-sm text-muted-foreground uppercase tracking-wider">Total Focus Minutes</div>
-              </div>
-            </div>
-            <p className="mt-8 text-muted-foreground">More stats coming soon...</p>
-          </div>
-        )}
+        {/* Analytics Dashboard — powered by MongoDB aggregation pipelines */}
+        {activeTab === 'dashboard' && <AnalyticsDashboard />}
 
         {/* Settings Placeholder */}
         {activeTab === 'settings' && (
