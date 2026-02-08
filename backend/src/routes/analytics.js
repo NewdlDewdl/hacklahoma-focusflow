@@ -12,6 +12,15 @@ function getModels() {
 
 const dbConnected = () => mongoose.connection.readyState === 1;
 
+// DEBUG: Test endpoint to verify route registration
+router.get('/test', (req, res) => {
+  res.json({ 
+    message: 'Analytics route is registered and working',
+    timestamp: new Date().toISOString(),
+    dbConnected: dbConnected()
+  });
+});
+
 /**
  * GET /api/analytics/dashboard
  * 
