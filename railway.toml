@@ -1,0 +1,12 @@
+# Railway service configuration
+# This file is for reference only - actual service config is in Railway dashboard
+
+[backend]
+# Root Directory should be set to: backend
+# Build Command: (auto from nixpacks.toml)
+# Start Command: node src/index.js (from nixpacks.toml)
+
+[frontend]
+# Root Directory should be set to: frontend
+# Build Command: npm run build
+# Start Command: npm start
