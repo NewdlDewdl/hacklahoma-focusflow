@@ -43,7 +43,33 @@ app.use('/api/sessions', require('./routes/sessions'));
 app.use('/api/users', require('./routes/users'));
 app.use('/api/analyze', require('./routes/analyze'));
 app.use('/api/rooms', require('./routes/rooms'));
-app.use('/api/analytics', require('./routes/analytics'));
+try {
+  app.use('/api/analytics', require('./routes/analytics'));
+  console.log('📊 Analytics routes loaded');
+} catch (err) {
+  console.error('❌ Analytics route failed to load:', err.message);
+  // Fallback: return informative error instead of silent 404
+  app.use('/api/analytics', (req, res) => {
+    res.status(503).json({ error: 'Analytics unavailable', reason: err.message });
+  });
+}
+
+// Debug: list all registered routes
+app.get('/api/debug/routes', (req, res) => {
+  const routes = [];
+  app._router.stack.forEach((middleware) => {
+    if (middleware.route) {
+      routes.push({ path: middleware.route.path, methods: Object.keys(middleware.route.methods) });
+    } else if (middleware.name === 'router') {
+      middleware.handle.stack.forEach((handler) => {
+        if (handler.route) {
+          routes.push({ path: handler.route.path, methods: Object.keys(handler.route.methods) });
+        }
+      });
+    }
+  });
+  res.json({ routes, registeredAt: new Date().toISOString() });
+});
 
 // Socket.io for real-time focus updates + multiplayer
 io.on('connection', (socket) => {
