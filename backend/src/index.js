@@ -6,6 +6,7 @@ const cors = require('cors');
 const helmet = require('helmet');
 const compression = require('compression');
 const rateLimit = require('express-rate-limit');
+const mongoose = require('mongoose');
 const { connectDB } = require('./config/db');
 const { initSolana } = require('./services/solana');
 const { initElevenLabs } = require('./services/elevenlabs');
@@ -42,6 +43,7 @@ app.use('/api/sessions', require('./routes/sessions'));
 app.use('/api/users', require('./routes/users'));
 app.use('/api/analyze', require('./routes/analyze'));
 app.use('/api/rooms', require('./routes/rooms'));
+app.use('/api/analytics', require('./routes/analytics'));
 
 // Socket.io for real-time focus updates + multiplayer
 io.on('connection', (socket) => {
@@ -91,6 +93,37 @@ async function start() {
     try {
       await connectDB();
       console.log('🗄️  MongoDB ready');
+      
+      // MongoDB Change Streams — real-time session updates pushed via Socket.io
+      // Showcases advanced MongoDB features (replica set required, Atlas provides it)
+      try {
+        const Session = require('./models/Session');
+        const changeStream = Session.watch([
+          { $match: { 'operationType': { $in: ['insert', 'update'] } } }
+        ], { fullDocument: 'updateLookup' });
+        
+        changeStream.on('change', (change) => {
+          if (change.fullDocument) {
+            io.emit('session:change', {
+              type: change.operationType,
+              session: {
+                _id: change.fullDocument._id,
+                status: change.fullDocument.status,
+                avgFocusScore: change.fullDocument.avgFocusScore,
+                tokensEarned: change.fullDocument.tokensEarned,
+              }
+            });
+          }
+        });
+        
+        changeStream.on('error', (err) => {
+          console.warn('⚠️  Change stream error (non-fatal):', err.message);
+        });
+        
+        console.log('📡 MongoDB Change Streams active');
+      } catch (csErr) {
+        console.warn('⚠️  Change Streams not available:', csErr.message);
+      }
     } catch (err) {
       console.warn('⚠️  MongoDB not connected:', err.message);
       console.log('   Continuing without DB (dev fallback enabled)');

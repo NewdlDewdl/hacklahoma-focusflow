@@ -22,4 +22,13 @@ const readingSchema = new mongoose.Schema({
 // Compound index for efficient session timeline queries
 readingSchema.index({ sessionId: 1, timestamp: 1 });
 
+// Index for user-level analytics aggregation
+readingSchema.index({ userId: 1, timestamp: -1 });
+
+// Index for distraction analysis
+readingSchema.index({ distractionType: 1, focusScore: 1 });
+
+// TTL index: auto-delete raw readings after 90 days (privacy-first)
+readingSchema.index({ timestamp: 1 }, { expireAfterSeconds: 90 * 24 * 60 * 60 });
+
 module.exports = mongoose.model('Reading', readingSchema);

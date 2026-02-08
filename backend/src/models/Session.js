@@ -30,4 +30,13 @@ const sessionSchema = new mongoose.Schema({
   tokenTxSignature: { type: String, default: null },
 }, { timestamps: true });
 
+// Indexes for leaderboard and analytics aggregation pipelines
+sessionSchema.index({ userId: 1, status: 1 });
+sessionSchema.index({ status: 1, endedAt: -1 });
+sessionSchema.index({ avgFocusScore: -1 }); // Leaderboard ranking
+sessionSchema.index({ roomId: 1, status: 1 }); // Multiplayer room queries
+
+// Text index on mode for text search demo
+sessionSchema.index({ mode: 'text' });
+
 module.exports = mongoose.model('Session', sessionSchema);
