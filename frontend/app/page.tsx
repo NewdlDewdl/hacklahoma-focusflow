@@ -187,14 +187,21 @@ export default function Home() {
 
   const handleStartSession = async () => {
     try {
-      // Request webcam permission
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: 'user', width: 640, height: 480 }
-      });
+      // DEV MODE: Skip camera requirement for testing
+      const isDev = process.env.NEXT_PUBLIC_DEV_MODE === 'true';
+      
+      if (!isDev) {
+        // Request webcam permission (production mode)
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: 'user', width: 640, height: 480 }
+        });
 
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-        streamRef.current = stream;
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream;
+          streamRef.current = stream;
+        }
+      } else {
+        console.log('🔧 DEV MODE: Skipping camera requirement');
       }
 
       // Start backend session

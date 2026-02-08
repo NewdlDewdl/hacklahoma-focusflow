@@ -59,7 +59,8 @@ io.on('connection', (socket) => {
   // Broadcast focus score to room peers
   socket.on('focus:broadcast', (data) => {
     if (data.roomId) {
-      socket.to(`room:${data.roomId}`).emit('room:focus-update', {
+      // Multiplayer room sockets join the plain roomId (no prefix)
+      socket.to(data.roomId).emit('room:focus-update', {
         userId: data.userId,
         displayName: data.displayName,
         focusScore: data.focusScore,
@@ -79,30 +80,35 @@ app.set('io', io);
 const PORT = process.env.PORT || 3001;
 
 async function start() {
-  try {
-    await connectDB();
-    console.log('🗄️  MongoDB ready');
-  } catch (err) {
-    console.warn('⚠️  MongoDB not connected:', err.message);
-    console.log('   Server will start without DB (for dev)');
-  }
-  
-  try {
-    await initSolana();
-    console.log('🪙 Solana ready');
-  } catch (err) {
-    console.warn('⚠️  Solana not initialized:', err.message);
-    console.log('   Server will start without Solana (for dev)');
-  }
-
-  initElevenLabs();
-
-  // Init Gemini
-  initGemini();
-  
+  // IMPORTANT: start accepting traffic immediately.
+  // External services (Mongo/Solana) should never block server startup.
   server.listen(PORT, () => {
     console.log(`🚀 FocusFlow backend running on port ${PORT}`);
   });
+
+  // Kick off initializers in the background (best-effort)
+  (async () => {
+    try {
+      await connectDB();
+      console.log('🗄️  MongoDB ready');
+    } catch (err) {
+      console.warn('⚠️  MongoDB not connected:', err.message);
+      console.log('   Continuing without DB (dev fallback enabled)');
+    }
+  })();
+
+  (async () => {
+    try {
+      await initSolana();
+      console.log('🪙 Solana ready');
+    } catch (err) {
+      console.warn('⚠️  Solana not initialized:', err.message);
+      console.log('   Continuing without Solana (dev fallback enabled)');
+    }
+  })();
+
+  initElevenLabs();
+  initGemini();
 }
 
 start();

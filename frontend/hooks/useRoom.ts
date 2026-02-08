@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { io, Socket } from 'socket.io-client';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3001';
 
 interface RoomUser {
   userId: string;
@@ -79,7 +79,8 @@ export function useRoom(socket: Socket | null) {
 
         // Join socket room for real-time events
         if (socket) {
-          socket.emit('join:room', `room:${roomId}`);
+          // Backend uses plain roomId for multiplayer rooms (no prefix)
+          socket.emit('join:room', roomId);
         }
         return data.room;
       }

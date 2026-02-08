@@ -89,8 +89,11 @@ router.post('/', async (req, res) => {
 
     // 5. Real-time broadcast
     const io = req.app.get('io');
-    const channel = session.roomId ? `room:${session.roomId}` : `session:${sessionId}`;
-    
+    // Socket room naming convention:
+    // - session updates: `session:<sessionId>`
+    // - multiplayer rooms: `<roomId>` (no prefix)
+    const channel = session.roomId ? session.roomId : `session:${sessionId}`;
+
     const finalAttention = attentionState || (distractionType === 'none' ? 'focused' : 'distracted');
     io.to(channel).emit('focus:update', {
       userId: session.userId,

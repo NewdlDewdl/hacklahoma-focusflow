@@ -101,7 +101,7 @@ router.post('/:id/end', async (req, res) => {
 
       const io = req.app.get('io');
       if (io && session.roomId) {
-        io.to(`room:${session.roomId}`).emit('session:complete', {
+        io.to(session.roomId).emit('session:complete', {
           sessionId: session._id,
           avgFocusScore: session.avgFocusScore,
           tokensEarned,
@@ -132,7 +132,7 @@ router.post('/:id/end', async (req, res) => {
 
     const io = req.app.get('io');
     if (io && session.roomId) {
-      io.to(`room:${session.roomId}`).emit('session:complete', {
+      io.to(session.roomId).emit('session:complete', {
         sessionId: session._id,
         avgFocusScore: session.avgFocusScore,
         tokensEarned,
