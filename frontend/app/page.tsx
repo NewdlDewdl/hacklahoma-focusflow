@@ -230,8 +230,9 @@ export default function Home() {
         console.log('🔧 DEV MODE: Skipping camera requirement');
       }
 
-      // Start backend session
-      const newSession = await startSession('solo');
+      // Start backend session with correct mode
+      const mode = (activeTab === 'multiplayer' && isInRoom) ? 'multiplayer' : 'solo';
+      const newSession = await startSession(mode);
 
       // Join socket room for real-time updates
       joinSession(newSession._id);
@@ -438,27 +439,7 @@ export default function Home() {
             {/* Session Controls */}
             <div className="flex gap-4 justify-center">
               {!isActive ? (
-                // Only show Start button if NOT in multiplayer lobby (lobby handles its own join)
-                // Actually multiplayer lobby joins a ROOM, but the SESSION starts when?
-                // The current logic: join room -> session starts?
-                // Re-reading handleJoinRoom: it just joins room.
-                // The room logic in backend probably handles start?
-                // Wait, handleStartSession starts a SOLO session.
-                // Does multiplayer have a "Start" button?
-                // In previous logic: "Start Focus Session" was shown when !isActive.
-                // If in multiplayer room, do we show "Start"?
-                // The RoomLeaderboard is shown if isInRoom.
-                // Logic seems: Join Room -> Active?
-                // Let's check handleJoinRoom again.
-                // It just joins socket room.
-                // isActive comes from useFocusSession hook.
-                // Multiplayer might need a "Ready" check or auto-start.
-                // For now, I'll hide "Start Focus Session" button if activeTab is multiplayer.
-                // Users in multiplayer join room and maybe session starts automatically?
-                // Or maybe they click "Start" individually?
-                // The previous code showed "Start Focus Session" for everyone if !isActive.
-                // But in multiplayer, you join a room first.
-                activeTab === 'solo' && (
+                (activeTab === 'solo' || (activeTab === 'multiplayer' && isInRoom)) && (
                   <motion.button
                     onClick={handleStartSession}
                     disabled={!isConnected}
@@ -466,7 +447,7 @@ export default function Home() {
                     whileTap={{ scale: 0.98 }}
                     className="action-button relative bg-gradient-to-r from-[#C2A15E] to-[#B36B4C] disabled:from-[#B8B1A3] disabled:to-[#9B9284] disabled:cursor-not-allowed text-[color:var(--foreground)] px-14 py-4 rounded-2xl text-xl font-semibold shadow-xl overflow-hidden"
                   >
-                    <span className="relative z-10">Start Focus Session</span>
+                    <span className="relative z-10">{activeTab === 'multiplayer' ? 'Start Competing' : 'Start Focus Session'}</span>
                     <motion.div
                       className="absolute inset-0 bg-gradient-to-r from-[#D4AF37]/30 to-[#B36B4C]/20 opacity-0 hover:opacity-100 transition-opacity"
                       animate={{ opacity: [0, 0.25, 0] }}
