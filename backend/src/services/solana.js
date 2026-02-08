@@ -4,11 +4,16 @@ const { createMint, getOrCreateAssociatedTokenAccount, mintTo } = require('@sola
 let connection = null;
 let mintAuthority = null;
 let mintAddress = null;
+let solanaReady = false; // Flag: only attempt minting if init succeeded
 
 /**
  * Initialize Solana connection and mint authority.
  * In production, SOLANA_MINT_KEYPAIR would be a persisted keypair.
  * For hackathon MVP, we generate fresh on first boot and store the mint.
+ * 
+ * GRACEFUL: If airdrop or mint creation fails (rate limits, no balance),
+ * Solana features are silently disabled. Token rewards are tracked in-memory
+ * and displayed in the UI regardless — on-chain minting is a bonus.
  */
 async function initSolana() {
   const rpcUrl = process.env.SOLANA_RPC_URL || clusterApiUrl('devnet');
@@ -29,7 +34,9 @@ async function initSolana() {
     await connection.confirmTransaction(sig);
     console.log('💰 Airdropped 2 SOL to mint authority');
   } catch (err) {
-    console.warn('⚠️  Airdrop failed (may already have balance):', err.message);
+    console.warn('⚠️  Airdrop failed (rate-limited or already funded) — skipping on-chain features');
+    console.log('   Token rewards will be tracked in-memory only');
+    return { connection, mintAuthority, mintAddress: null };
   }
   
   // Create the FOCUS token mint (0 decimals — whole tokens only)
@@ -41,9 +48,11 @@ async function initSolana() {
       null,              // freeze authority
       0                  // decimals
     );
+    solanaReady = true;
     console.log('🪙 FOCUS token mint created:', mintAddress.toBase58());
   } catch (err) {
-    console.error('❌ Failed to create mint:', err.message);
+    console.warn('⚠️  Mint creation failed:', err.message);
+    console.log('   Token rewards will be tracked in-memory only');
   }
   
   return { connection, mintAuthority, mintAddress };
@@ -56,8 +65,8 @@ async function initSolana() {
  * @returns {string|null} Transaction signature or null on failure
  */
 async function rewardTokens(walletPubkey, amount) {
-  if (!connection || !mintAddress || !mintAuthority) {
-    console.warn('Solana not initialized, skipping reward');
+  if (!solanaReady || !connection || !mintAddress || !mintAuthority) {
+    // Silently skip — tokens are still tracked in DB/memory, just not minted on-chain
     return null;
   }
   
@@ -111,4 +120,8 @@ function getMintAddress() {
   return mintAddress?.toBase58() || null;
 }
 
-module.exports = { initSolana, rewardTokens, calculateReward, getMintAddress };
+function isSolanaReady() {
+  return solanaReady;
+}
+
+module.exports = { initSolana, rewardTokens, calculateReward, getMintAddress, isSolanaReady };
