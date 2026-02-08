@@ -15,6 +15,7 @@ interface FocusUpdate {
 interface Nudge {
   userId: string;
   message: string;
+  audio?: string;
 }
 
 interface UseSocketReturn {

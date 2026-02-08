@@ -45,7 +45,7 @@ export function FocusChart({ data, className = '' }: FocusChartProps) {
               borderRadius: '8px',
               color: '#2B2B2B',
             }}
-            formatter={(value: number) => [`${value}`, 'Focus Score']}
+            formatter={(value: any) => [`${value}`, 'Focus Score']}
           />
           {/* Threshold lines */}
           <ReferenceLine y={80} stroke="rgba(124,139,111,0.4)" strokeDasharray="5 5" label="" />
